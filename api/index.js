@@ -49,7 +49,3 @@ server.listen(3001, ()=>{
 
 // Initialize DB
 require('./initDB')();
-
-app.get('/', (req, res, next)=>{
-    res.json({message: 'It works...', env_name: process.env.DB_USER})
-})
