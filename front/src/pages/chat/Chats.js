@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import './Chat.css';
 import ScrollToButtom from 'react-scroll-to-bottom'
 import { SendMessageButton } from '../../components/button/SendMessageButton'
 
