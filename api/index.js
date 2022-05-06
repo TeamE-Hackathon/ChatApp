@@ -7,10 +7,7 @@ const Msg = require('./Models/Message.model');
 require('dotenv').config();
 const app = express();
 
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
-
-// -----------  Chat start -----------------
+// open websocket on 3000
 app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -28,6 +25,7 @@ io.on("connection", (socket)=> {
         console.log(`user with ID: ${socket.id} join_room: ${data}`);
     });
 
+    // save to mongoDB
     socket.on('send_message', (data) => {
         console.log("send_message", data);
         const msg = new Msg({
@@ -43,8 +41,6 @@ io.on("connection", (socket)=> {
         console.log("User Disconnected", socket.id);
     });
 })
-// -----------  Chat end -----------------
-
 
 // for TPC servers
 server.listen(3001, ()=>{
