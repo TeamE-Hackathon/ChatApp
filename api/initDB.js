@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
 
 module.exports = () => {
-    console.log(process.env.MONGODB_URI);
-    console.log(process.env.DB_NAME);
-    console.log(process.env.DB_USER);
-    console.log(process.env.DB_PASS);
-
   mongoose
     .connect(
         // TODO: mongoのコンテナを使うときは MONGODB_URI を使う
