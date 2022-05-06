@@ -1,0 +1,54 @@
+
+version: "3.9"
+services:
+  app-front:
+    container_name: app-front
+    build: ./front
+    stdin_open: true
+    tty: true
+    ports:
+      - "3000:3000"
+    networks:
+      - mern-app
+    volumes:
+      - ./front:/usr/src/app
+      - /usr/src/app/node_modules # volume trick
+
+  app-api:
+    container_name: app-api
+    build: ./api
+    stdin_open: true
+    tty: true
+    ports:
+      - "3001:3001"
+    networks:
+      - mern-app
+    volumes:
+      - ./api:/usr/src/app
+      - /usr/src/app/node_modules # volume trick
+    # depends_on:
+    #   - mongo-db
+
+  # ToDo: MongoDB Atlasを一旦使う。
+  # mongo-db:
+  #   container_name: mongo-db
+  #   image: mongo:latest
+  #   restart: always
+  #   ports:
+  #     - "27017:27017"
+  #   environment:
+  #     - MONGO_INITDB_ROOT_USERNAME=mng_user
+  #     - MONGO_INITDB_ROOT_PASSWORD=mng_pw
+  #     # - MONGO_INITDB_DATABASE=chat
+  #   networks:
+  #     - mern-app
+  #   volumes:
+  #     - mongo-data:/data/db
+
+networks:
+  mern-app:
+    driver: bridge
+
+# volumes:
+#   mongo-data:
+#     driver: local
