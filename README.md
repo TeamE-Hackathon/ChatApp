@@ -1,4 +1,4 @@
-### 環境構築
+## 環境構築
     # プロジェクトルートに移動
     cd /github.com/TeamE-Hackathon/ChatApp
 
@@ -8,11 +8,24 @@
     # frontとapiのコンテナ停止
     docker compose down
 
-    # DynamoDB ローカル開発環境用のGUI(https://github.com/Arattian/DynamoDb-GUI-Client)
+
+## ツール
+### DynamoDBローカルのGUI
+    # 参照先
+    https://github.com/Arattian/DynamoDb-GUI-Client
+
+    # /ChatAppと並列に作りたいので階層一個下がる
+    cd ../
+
+    # クローン
     git clone https://github.com/Arattian/DynamoDb-GUI-Client.git
+
     cd DynamoDb-GUI-Client
+
     npm i
+
     # Electron serve
     npm run electron:serve
+
     # Vue Cli serve
     npm start
