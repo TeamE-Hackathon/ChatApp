@@ -11,23 +11,17 @@
 
 ## ツール
 ### DynamoDBローカルのGUI
-    # (参照先)
-    ( https://github.com/Arattian/DynamoDb-GUI-Client )
 
-    #① /ChatAppと並列に作りたいので階層一個下がる
-    cd ../
+    #① ダウンロード(https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/workbench.settingup.html)
 
-    #② クローン
-    git clone https://github.com/Arattian/DynamoDb-GUI-Client.git
+    #② NoSQL Workbench アプリ起動
 
-    #③ クローンしたディレクトリに移動
-    cd DynamoDb-GUI-Client
+    #③ Amazon DynamoDB Loanch
 
-    #④ npm install
-    npm i
+    #④ 左のメニューのOperation builder
 
-    #⑤ Electron serve
-    npm run electron:serve
+    #⑤ Add connection(上の青いやつ)
 
-    #⑥ Vue Cli serve (⑤,⑥両方実行する必要あります)
-    npm start
+    #⑥ DynamoDB local のタブ押下
+
+    #⑦ connection_name: 任意、Port: 8000 で接続
