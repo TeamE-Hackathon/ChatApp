@@ -11,21 +11,23 @@
 
 ## ツール
 ### DynamoDBローカルのGUI
-    # 参照先
-    https://github.com/Arattian/DynamoDb-GUI-Client
+    # (参照先)
+    ( https://github.com/Arattian/DynamoDb-GUI-Client )
 
-    # /ChatAppと並列に作りたいので階層一個下がる
+    #① /ChatAppと並列に作りたいので階層一個下がる
     cd ../
 
-    # クローン
+    #② クローン
     git clone https://github.com/Arattian/DynamoDb-GUI-Client.git
 
+    #③ クローンしたディレクトリに移動
     cd DynamoDb-GUI-Client
 
+    #④ npm install
     npm i
 
-    # Electron serve
+    #⑤ Electron serve
     npm run electron:serve
 
-    # Vue Cli serve
+    #⑥ Vue Cli serve (⑤,⑥両方実行する必要あります)
     npm start
