@@ -9,7 +9,7 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - mern-app
+      - dern-app
     volumes:
       - ./front:/usr/src/app
       - /usr/src/app/node_modules # volume trick
@@ -20,17 +20,35 @@ services:
     ports:
       - "3001:3001"
     networks:
-      - mern-app
+      - dern-app
     volumes:
       - ./api:/usr/src/app
       - /usr/src/app/node_modules # volume trick
-    # depends_on:
-    #   - mongo-db
+    depends_on:
+      - dynamodb
 
-  # ToDo: MongoDB Atlasを一旦使う。
+  dynamodb:
+    container_name: dynamodb-local
+    hostname: dynamodblocal
+    image: amazon/dynamodb-local:latest
+    # -sharedDb : ない場合は、myaccesskeyid_region.dbとなる
+    # -dbPath :永続化するデータのパスを指定(volumeのパス)
+    # -inMemory : データはメモリ内に展開され、コンテナを停止・削除するとデータも破棄される
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /data"
+    # admin
+    ports:
+      - "8000:8000"
+    networks:
+      - dern-app
+    volumes:
+      - ./dynamodb-local-data:/data
+    expose:
+      - "8000"
+
+  # MongoDB Atlasを一旦使う。
   # mongo-db:
   #   container_name: mongo-db
-  #   image: mongo:latest
+  #   image: mongo:latest8000:
   #   restart: always
   #   ports:
   #     - "27017:27017"
@@ -39,14 +57,18 @@ services:
   #     - MONGO_INITDB_ROOT_PASSWORD=mng_pw
   #     # - MONGO_INITDB_DATABASE=chat
   #   networks:
-  #     - mern-app
+  #     - dern-app
   #   volumes:
   #     - mongo-data:/data/db
 
+  # volumes:
+  #   mongo-data:
+  #     driver: local
+
+
 networks:
-  mern-app:
+  dern-app:
     driver: bridge
 
-# volumes:
-#   mongo-data:
-#     driver: local
+volumes:
+  dynamodb-local-data:
