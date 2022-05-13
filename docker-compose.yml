@@ -35,13 +35,12 @@ services:
     # -dbPath :永続化するデータのパスを指定(volumeのパス)
     # -inMemory : データはメモリ内に展開され、コンテナを停止・削除するとデータも破棄される
     command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /data"
-    # admin
     ports:
       - "8000:8000"
     networks:
       - dern-app
     volumes:
-      - ./dynamodb-local-data:/data
+      - ./.dynamodb-local-data:/data
     expose:
       - "8000"
 

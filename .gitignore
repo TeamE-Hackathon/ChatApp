@@ -1,4 +1,4 @@
 rest.http
 node_modules/
 .env
-dynamodb-local-data
+.dynamodb-local-data/
