@@ -25,3 +25,5 @@
     #⑥ DynamoDB local のタブを押下
 
     #⑦ connection_name: 任意ChatApp-localとか)、Port: 8000 で接続
+
+### AWS CLIのインストール
