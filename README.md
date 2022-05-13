@@ -16,12 +16,12 @@
 
     #② NoSQL Workbench アプリ起動
 
-    #③ Amazon DynamoDB Loanch
+    #③ Amazon DynamoDB Loanch(青いボタン)
 
     #④ 左のメニューのOperation builder
 
     #⑤ Add connection(上の青いやつ)
 
-    #⑥ DynamoDB local のタブ押下
+    #⑥ DynamoDB local のタブを押下
 
-    #⑦ connection_name: 任意、Port: 8000 で接続
+    #⑦ connection_name: 任意ChatApp-localとか)、Port: 8000 で接続
