@@ -8,6 +8,18 @@
     # frontとapiのコンテナ停止
     docker compose down
 
+##　DynamoDB テーブル操作方法
+    # テーブル作成(例. chatテーブル作成)
+    ./local.sh create_table chat
+
+    # テーブル一覧取得
+    ./local.sh list_tables
+
+    # テーブル情報表示
+    ./local.sh describe_table chat
+
+    # テーブル削除(例. chatテーブル削除)
+    /local.sh delete_table chat
 
 ## ツール
 ### DynamoDBローカルのGUI
