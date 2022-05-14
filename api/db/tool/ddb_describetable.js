@@ -1,7 +1,7 @@
 // require('dotenv').config();
 
 // Load the AWS SDK for Node.js
-var AWS = require('aws-sdk');
+const AWS = require('aws-sdk');
 
 // Set the region
 AWS.config.update({
@@ -13,9 +13,9 @@ AWS.config.update({
 // AWS.config.loadFromPath('./../config.json');
 
 // Create the DynamoDB service object
-var ddb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
+const ddb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
 
-var params = {
+const params = {
   TableName: process.argv[2]
 };
 
