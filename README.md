@@ -22,7 +22,7 @@
     /local.sh delete_table chat
 
 ## ツール
-### DynamoDBローカルのGUI
+### NoSQL Workbench
 
     #① ダウンロード(https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/workbench.settingup.html)
 
@@ -32,7 +32,7 @@
 
     #④ 左のメニューのOperation builder
 
-    #⑤ Add connection(上の青いやつ)
+    #⑤ Add connection(上の青いやつ)
 
     #⑥ DynamoDB local のタブを押下
 
