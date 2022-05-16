@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import './Chat.css';
 import ScrollToButtom from 'react-scroll-to-bottom';
 import { SendMessageButton } from '../../components/button/SendMessageButton';
 
-function Chats({ socket, username, room }) {
+Chats.propTypes = {
+    socket: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired,
+    room: PropTypes.string.isRequired,
+};
+
+export const Chats = function ({ socket, username, room }) {
     const [currentMessage, setcurrentMessage] = useState('');
     const [messageList, setMessageList] = useState([]);
     const sendMessage = async () => {
@@ -41,10 +48,11 @@ function Chats({ socket, username, room }) {
             </div>
             <div className='chat-body'>
                 <ScrollToButtom className='message-container'>
-                    {messageList.map((messageContent) => {
+                    {messageList.map((messageContent, index) => {
                         console.log('mesageContent', messageContent);
                         return (
                             <div
+                                key={index}
                                 className="message"
                                 id={username === messageContent.author ? 'you' : 'other'}
                             >
@@ -76,6 +84,4 @@ function Chats({ socket, username, room }) {
             </div>
         </div>
     );
-}
-
-export default Chats;
+};
