@@ -4,13 +4,7 @@ import './Chat.css';
 import ScrollToButtom from 'react-scroll-to-bottom';
 import { SendMessageButton } from '../../components/button/SendMessageButton';
 
-Chats.propTypes = {
-    socket: PropTypes.string.isRequired,
-    username: PropTypes.string.isRequired,
-    room: PropTypes.string.isRequired,
-};
-
-export const Chats = function ({ socket, username, room }) {
+export const Chat = function ({ socket, username, room }) {
     const [currentMessage, setcurrentMessage] = useState('');
     const [messageList, setMessageList] = useState([]);
     const sendMessage = async () => {
@@ -53,16 +47,16 @@ export const Chats = function ({ socket, username, room }) {
                         return (
                             <div
                                 key={index}
-                                className="message"
+                                className='message'
                                 id={username === messageContent.author ? 'you' : 'other'}
                             >
                                 <div>
-                                    <div className="message-content">
+                                    <div className='message-content'>
                                         <p>{messageContent.message}</p>
                                     </div>
-                                    <div className="message-meta">
-                                        <p id="time">{messageContent.time}</p>
-                                        <p id="author">{messageContent.author}</p>
+                                    <div className='message-meta'>
+                                        <p id='time'>{messageContent.time}</p>
+                                        <p id='author'>{messageContent.author}</p>
                                     </div>
                                 </div>
                             </div>
@@ -80,8 +74,14 @@ export const Chats = function ({ socket, username, room }) {
                     }}
                 />
                 {/* TODO: EnterKeyでも送信できるようにする？*/}
-                <SendMessageButton onClick={sendMessage}/>
+                <SendMessageButton onClick={sendMessage} />
             </div>
         </div>
     );
+};
+
+Chat.propTypes = {
+    socket: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired,
+    room: PropTypes.string.isRequired,
 };
