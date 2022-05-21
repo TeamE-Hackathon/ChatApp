@@ -19,7 +19,7 @@
     ./local.sh describe_table chat
 
     # テーブル削除(例. chatテーブル削除)
-    /local.sh delete_table chat
+    ./local.sh delete_table chat
 
 ## ツール
 ### NoSQL Workbench
@@ -38,4 +38,6 @@
 
     #⑦ connection_name: 任意ChatApp-localとか)、Port: 8000 で接続
 
-### AWS CLIのインストール
+### 技術スタック
+    React   v18.1.0
+    Node.js v18.1.0
