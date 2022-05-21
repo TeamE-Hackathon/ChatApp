@@ -37,6 +37,9 @@ services:
     command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /data"
     ports:
       - "8000:8000"
+    environment:
+      AWS_ACCESS_KEY_ID: 'DUMMY'
+      AWS_SECRET_ACCESS_KEY: 'DUMMY'
     networks:
       - dern-app
     volumes:
