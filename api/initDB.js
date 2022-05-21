@@ -1,40 +1,35 @@
-const mongoose = require('mongoose');
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+const { fromEnv } = require("@aws-sdk/credential-providers"); // CommonJS import
 
-module.exports = () => {
-  mongoose
-    .connect(
-        // TODO: mongoのコンテナを使うときは MONGODB_URI を使う
-        process.env.MONGODB_ATRAS_URI, {
-          dbName: process.env.DB_NAME,
-          user: process.env.DB_USER,
-          pass: process.env.DB_PASS,
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-        }
-    )
-    .then(() => {
-      console.log('Mongodb connected....');
-    })
-    .catch(err => console.log(err.message));
+require('dotenv').config();
+const REGION = process.env.AWS_DEFAULT_REGION;
+const ENDPOINT = process.env.LOCAL_DYNAMO_DB_URL + ':' + process.env.DB_PORT
 
-  mongoose.connection.on('connected', () => {
-    console.log('Mongoose connected to db...');
-  });
+// Bare-bones DynamoDB Client
+const ddbClient= new DynamoDBClient({
+     region: REGION,
+     endpoint: ENDPOINT,
+     credentials: fromEnv(),
+});
 
-  mongoose.connection.on('error', err => {
-    console.log(err.message);
-  });
+// Purpose: ddbDocClient.js is a helper function that creates an Amazon DynamoDB service document client.
+const { DynamoDBDocumentClient } = require("@aws-sdk/lib-dynamodb");
 
-  mongoose.connection.on('disconnected', () => {
-    console.log('Mongoose connection is disconnected...');
-  });
-
-  process.on('SIGINT', () => {
-    mongoose.connection.close(() => {
-      console.log(
-        'Mongoose connection is disconnected due to app termination...'
-      );
-      process.exit(0);
-    });
-  });
+const marshallOptions = {
+    // Whether to automatically convert empty strings, blobs, and sets to `null`.
+    convertEmptyValues: false, // false, by default.
+    // Whether to remove undefined values while marshalling.
+    removeUndefinedValues: false, // false, by default.
+    // Whether to convert typeof object to map attribute.
+    convertClassInstanceToMap: false, // false, by default.
 };
+
+const unmarshallOptions = {
+    // Whether to return numbers as a string instead of converting them to native JavaScript numbers.
+    wrapNumbers: false, // false, by default.
+};
+
+const translateConfig = { marshallOptions, unmarshallOptions };
+
+// Create the Bare-bones DynamoDB Document client.
+exports.ddbDocClient = DynamoDBDocumentClient.from(ddbClient, translateConfig);

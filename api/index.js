@@ -1,8 +1,14 @@
 const express = require('express');
 const http = require('http');
+
+// for establish connection to client
 const cors = require('cors');
 const { Server } = require('socket.io');
-const Msg = require('./Models/Message.model');
+
+// for saving to dynamoDB
+const { PutCommand } = require('@aws-sdk/lib-dynamodb');
+const { ddbDocClient } = require('./initDB');
+const { nowTime } = require('./utils/dateTime')
 
 require('dotenv').config();
 const app = express();
@@ -17,7 +23,12 @@ const io = new Server(server, {
     },
 })
 
-io.on("connection", (socket)=> {
+// for TPC servers
+server.listen(3001, () => {
+    console.log("Started api server on 3001");
+})
+
+io.on("connection", (socket) => {
     console.log("User connected", socket.id);
 
     socket.on('join_room', (data) => {
@@ -25,27 +36,26 @@ io.on("connection", (socket)=> {
         console.log(`user with ID: ${socket.id} join_room: ${data}`);
     });
 
-    // save to mongoDB
-    socket.on('send_message', (data) => {
+    socket.on('send_message', async (data) => {
         console.log("send_message", data);
-        const msg = new Msg({
-            room: data.room,
-            author: data.author,
-            message: data.message,
-        });
-        msg.save().then(()=>{
-            socket.to(data.room).emit("receive_message", data)
-        })
+        const params = {
+            TableName: 'chat',
+            Item: {
+                'name': data.author,
+                'time': nowTime(),
+                'chat_room': data.room,
+                'message': data.message,
+            }
+        };
+        try {
+            const data = await ddbDocClient.send(new PutCommand(params));
+            console.log("Success - item added or updated", data);
+            return data;
+        } catch (err) {
+            console.log("Error", err);
+        }
     });
     socket.on('disconnect', () => {
         console.log("User Disconnected", socket.id);
     });
 })
-
-// for TPC servers
-server.listen(3001, ()=>{
-    console.log("Started api server on 3001");
-})
-
-// Initialize DB
-require('./initDB')();
