@@ -1,12 +1,12 @@
-import './App.css';
+import './NewRoom.css';
 import io from 'socket.io-client';
 
 import { useState } from 'react';
-import { Chat } from '../chat/Chats';
+import { Chat } from './../chat/Chats';
 
 const socket = io.connect('http://localhost:3001');
 
-function App() {
+export const NewRoom = () => {
     const [username, setUsername] = useState('');
     const [room, setRoom] = useState('');
     const [showChat, setShowChat] = useState(false);
@@ -20,7 +20,7 @@ function App() {
     };
 
     return (
-        <div className="App">
+        <div className="NewRoom">
             {!showChat ? (
                 <div className="joinChatContainer">
                     <h3>Welcom Chat</h3>
@@ -45,6 +45,4 @@ function App() {
             )}
         </div>
     );
-}
-
-export default App;
+};
