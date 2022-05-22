@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Rooms = function() {
+export const Rooms = () => {
     return (
         <div>
             Topページ: ルーム一覧

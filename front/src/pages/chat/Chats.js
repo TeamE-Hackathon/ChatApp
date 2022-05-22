@@ -4,7 +4,7 @@ import './Chat.css';
 import ScrollToButtom from 'react-scroll-to-bottom';
 import { SendMessageButton } from '../../components/button/SendMessageButton';
 
-export const Chat = function ({ socket, username, room }) {
+export const Chat = ({ socket, username, room }) => {
     const [currentMessage, setcurrentMessage] = useState('');
     const [messageList, setMessageList] = useState([]);
     const sendMessage = async () => {
