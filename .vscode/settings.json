@@ -1,0 +1,17 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    // ファイルを保存したときに、コードを ESlint で検証しエラーを修正する
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
+  },
+  "vetur.validation.template": false, // Vetur によるコードチェックを行わない
+  "eslint.validate": [
+    // ESLint によるコードチェックを、以下の言語について行う
+    "html",
+    "javascript",
+    "javascriptreact"
+  ]
+}
