@@ -15,7 +15,7 @@ export default function ActionAreaCard(props) {
                     component='img'
                     height='140'
                     image={imageUrl}
-                    alt='green iguana'
+                    alt={title}
                 />
                 <CardContent>
                     <Typography gutterBottom variant='h5' component='div'>
