@@ -1,14 +1,19 @@
 ## 環境構築
+
     # プロジェクトルートに移動
     cd /github.com/TeamE-Hackathon/ChatApp
 
     # frontとapiのコンテナ起動
     docker compose up
 
+    # frontとapiをbuildしてコンテナ起動
+    docker-compose up --build
+
     # frontとapiのコンテナ停止
     docker compose down
 
 ## DynamoDB テーブル操作方法
+
     # テーブル作成(例. chatテーブル作成)
     ./local.sh create_table chat
 
@@ -22,6 +27,7 @@
     ./local.sh delete_table chat
 
 ## ツール
+
 ### NoSQL Workbench
 
     #① ダウンロード(https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/workbench.settingup.html)
@@ -39,5 +45,6 @@
     #⑦ connection_name: 任意ChatApp-localとか)、Port: 8000 で接続
 
 ### 技術スタック
+
     React   v18.1.0
     Node.js v18.1.0
