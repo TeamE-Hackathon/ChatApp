@@ -22,8 +22,7 @@
     "react/react-in-jsx-scope": "off",
     "indent": ["error", 2],
     "linebreak-style": ["error", "unix"],
-    "quotes": ["error", "double"],
-    "semi": ["error", "always"],
-    "prettier/prettier": "error"
+    "quotes": ["error", "single"],
+    "semi": ["error", "always"]
   }
 }

@@ -1,16 +1,16 @@
-const express = require("express");
-const http = require("http");
+const express = require('express');
+const http = require('http');
 
 // for establish connection to client
-const cors = require("cors");
-const { Server } = require("socket.io");
+const cors = require('cors');
+const { Server } = require('socket.io');
 
 // for saving to dynamoDB
-const { PutCommand } = require("@aws-sdk/lib-dynamodb");
-const { ddbDocClient } = require("./initDB");
-const { nowTime } = require("./utils/dateTime");
+const { PutCommand } = require('@aws-sdk/lib-dynamodb');
+const { ddbDocClient } = require('./initDB');
+const { nowTime } = require('./utils/dateTime');
 
-require("dotenv").config();
+require('dotenv').config();
 const app = express();
 
 // open websocket on 3000
@@ -18,28 +18,28 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST'],
   },
 });
 
 // for TPC servers
 server.listen(3001, () => {
-  console.log("Started api server on 3001");
+  console.log('Started api server on 3001');
 });
 
-io.on("connection", (socket) => {
-  console.log("User connected", socket.id);
+io.on('connection', (socket) => {
+  console.log('User connected', socket.id);
 
-  socket.on("join_room", (data) => {
+  socket.on('join_room', (data) => {
     socket.join(data);
     console.log(`user with ID: ${socket.id} join_room: ${data}`);
   });
 
-  socket.on("send_message", async (data) => {
-    console.log("send_message", data);
+  socket.on('send_message', async (data) => {
+    console.log('send_message', data);
     const params = {
-      TableName: "chat",
+      TableName: 'chat',
       Item: {
         name: data.author,
         time: nowTime(),
@@ -49,13 +49,13 @@ io.on("connection", (socket) => {
     };
     try {
       const data = await ddbDocClient.send(new PutCommand(params));
-      console.log("Success - item added or updated", data);
+      console.log('Success - item added or updated', data);
       return data;
     } catch (err) {
-      console.log("Error", err);
+      console.log('Error', err);
     }
   });
-  socket.on("disconnect", () => {
-    console.log("User Disconnected", socket.id);
+  socket.on('disconnect', () => {
+    console.log('User Disconnected', socket.id);
   });
 });

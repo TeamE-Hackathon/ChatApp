@@ -1,54 +1,54 @@
-import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
-import ScrollToButtom from "react-scroll-to-bottom";
-import { SendMessageButton } from "../../components/button/SendMessageButton";
-import "./Chat.css";
+import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
+import ScrollToButtom from 'react-scroll-to-bottom';
+import { SendMessageButton } from '../../components/button/SendMessageButton';
+import './Chat.css';
 
 export const Chat = ({ socket, username, room }) => {
-  const [currentMessage, setcurrentMessage] = useState("");
+  const [currentMessage, setcurrentMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
   const sendMessage = async () => {
-    if (currentMessage !== "") {
+    if (currentMessage !== '') {
       const messageData = {
         room: room,
         author: username,
         message: currentMessage,
-        time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes(),
+        time: new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes(),
       };
 
-      await socket.emit("send_message", messageData);
+      await socket.emit('send_message', messageData);
       // my new mesage
       setMessageList((list) => [...list, messageData]);
-      setcurrentMessage("");
+      setcurrentMessage('');
     }
   };
 
   useEffect(() => {
-    socket.on("receive_message", (data) => {
-      console.log("receive_message;", data);
+    socket.on('receive_message', (data) => {
+      console.log('receive_message;', data);
       setMessageList((list) => [...list, data]);
     });
   }, [socket]);
 
   return (
-    <div className="chat-window">
-      <div className="chat-header">
+    <div className='chat-window'>
+      <div className='chat-header'>
         {/* TODO: Room名表示する？*/}
         <p>Room : </p>
       </div>
-      <div className="chat-body">
-        <ScrollToButtom className="message-container">
+      <div className='chat-body'>
+        <ScrollToButtom className='message-container'>
           {messageList.map((messageContent, index) => {
-            console.log("mesageContent", messageContent);
+            console.log('mesageContent', messageContent);
             return (
-              <div key={index} className="message" id={username === messageContent.author ? "you" : "other"}>
+              <div key={index} className='message' id={username === messageContent.author ? 'you' : 'other'}>
                 <div>
-                  <div className="message-content">
+                  <div className='message-content'>
                     <p>{messageContent.message}</p>
                   </div>
-                  <div className="message-meta">
-                    <p id="time">{messageContent.time}</p>
-                    <p id="author">{messageContent.author}</p>
+                  <div className='message-meta'>
+                    <p id='time'>{messageContent.time}</p>
+                    <p id='author'>{messageContent.author}</p>
                   </div>
                 </div>
               </div>
@@ -56,11 +56,11 @@ export const Chat = ({ socket, username, room }) => {
           })}
         </ScrollToButtom>
       </div>
-      <div className="chat-footer">
+      <div className='chat-footer'>
         <input
-          type="text"
+          type='text'
           value={currentMessage}
-          placeholder="hey.."
+          placeholder='hey..'
           onChange={(e) => {
             setcurrentMessage(e.target.value);
           }}

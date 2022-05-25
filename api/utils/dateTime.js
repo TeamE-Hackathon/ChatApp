@@ -5,7 +5,7 @@ const nowTime = () => {
   let date = today.getDate();
   let time = today.toTimeString();
 
-  dateTime = year + "/" + month + "/" + date + " " + time;
+  dateTime = year + '/' + month + '/' + date + ' ' + time;
   return dateTime;
 };
 

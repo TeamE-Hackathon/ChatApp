@@ -1,37 +1,37 @@
-import { useState } from "react";
-import io from "socket.io-client";
-import { Chat } from "./../chat/Chats";
-import "./NewRoom.css";
+import { useState } from 'react';
+import io from 'socket.io-client';
+import { Chat } from './../chat/Chats';
+import './NewRoom.css';
 
-const socket = io.connect("http://localhost:3001");
+const socket = io.connect('http://localhost:3001');
 
 export const NewRoom = () => {
-  const [username, setUsername] = useState("");
-  const [room, setRoom] = useState("");
+  const [username, setUsername] = useState('');
+  const [room, setRoom] = useState('');
   const [showChat, setShowChat] = useState(false);
 
   const joinRoom = () => {
-    if (username !== "" && room !== "") {
-      socket.emit("join_room", room);
+    if (username !== '' && room !== '') {
+      socket.emit('join_room', room);
       setShowChat(true);
     }
   };
 
   return (
-    <div className="NewRoom">
+    <div className='NewRoom'>
       {!showChat ? (
-        <div className="joinChatContainer">
+        <div className='joinChatContainer'>
           <h3>Welcom Chat</h3>
           <input
-            type="text"
-            placeholder="名前を入力してください"
+            type='text'
+            placeholder='名前を入力してください'
             onChange={(e) => {
               setUsername(e.target.value);
             }}
           />
           <input
-            type="text"
-            placeholder="RoomIDを入力してください"
+            type='text'
+            placeholder='RoomIDを入力してください'
             onChange={(e) => {
               setRoom(e.target.value);
             }}
