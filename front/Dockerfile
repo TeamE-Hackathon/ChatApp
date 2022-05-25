@@ -8,7 +8,9 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # This command is similar to npm install and significantly faster
-RUN npm ci
+RUN npm install
+
+RUN npm install prettier eslint-plugin-prettier eslint-config-prettier
 
 # Copy rest of the code to container
 COPY . .
@@ -18,4 +20,3 @@ EXPOSE 3000 3001
 
 # Run the React app
 CMD ["npm", "start"]
-
