@@ -7,10 +7,10 @@ WORKDIR /usr/src/app
 # copy package.json and package-lock.json to working directory
 COPY package*.json ./
 
-# This command is similar to npm install and significantly faster
-RUN npm install
-
-RUN npm install prettier eslint-plugin-prettier eslint-config-prettier
+RUN npm install && npm install \
+  prettier \
+  eslint-plugin-prettier \
+  eslint-config-prettier
 
 # Copy rest of the code to container
 COPY . .
