@@ -1,7 +1,7 @@
-const createError = require('http-errors');
-const mongoose = require('mongoose');
+const createError = require("http-errors");
+const mongoose = require("mongoose");
 
-const User = require('../Models/User.model');
+const User = require("../Models/User.model");
 
 module.exports = {
   getAllUsers: async (req, res, next) => {
@@ -23,7 +23,7 @@ module.exports = {
       res.send(result);
     } catch (error) {
       console.log(error.message);
-      if (error.name === 'ValidationError') {
+      if (error.name === "ValidationError") {
         next(createError(422, error.message));
         return;
       }
@@ -55,13 +55,13 @@ module.exports = {
       const user = await User.findById(id);
       // const user = await User.findOne({ _id: id });
       if (!user) {
-        throw createError(404, 'User does not exist.');
+        throw createError(404, "User does not exist.");
       }
       res.send(user);
     } catch (error) {
       console.log(error.message);
       if (error instanceof mongoose.CastError) {
-        next(createError(400, 'Invalid User id'));
+        next(createError(400, "Invalid User id"));
         return;
       }
       next(error);
@@ -76,13 +76,13 @@ module.exports = {
 
       const result = await User.findByIdAndUpdate(id, updates, options);
       if (!result) {
-        throw createError(404, 'User does not exist');
+        throw createError(404, "User does not exist");
       }
       res.send(result);
     } catch (error) {
       console.log(error.message);
       if (error instanceof mongoose.CastError) {
-        return next(createError(400, 'Invalid User Id'));
+        return next(createError(400, "Invalid User Id"));
       }
 
       next(error);
@@ -95,16 +95,16 @@ module.exports = {
       const result = await User.findByIdAndDelete(id);
       // console.log(result);
       if (!result) {
-        throw createError(404, 'User does not exist.');
+        throw createError(404, "User does not exist.");
       }
       res.send(result);
     } catch (error) {
       console.log(error.message);
       if (error instanceof mongoose.CastError) {
-        next(createError(400, 'Invalid User id'));
+        next(createError(400, "Invalid User id"));
         return;
       }
       next(error);
     }
-  }
+  },
 };
