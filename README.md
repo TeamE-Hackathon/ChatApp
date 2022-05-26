@@ -6,8 +6,8 @@
     # frontとapiのコンテナ起動
     docker compose up
 
-    # frontとapiをbuildしてコンテナ起動
-    docker-compose up --build
+    # 既にイメージがある場合に、ビルドし直してコンテナを起動したい時
+    docker compose build --no-cache && docker compose up
 
     # frontとapiのコンテナ停止
     docker compose down
