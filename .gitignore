@@ -1,3 +1,16 @@
+### OSX ###
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
 rest.http
 node_modules/
 .env
