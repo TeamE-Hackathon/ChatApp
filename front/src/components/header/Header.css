@@ -1,0 +1,11 @@
+.headerLeft {
+  flex: 4;
+  display: flex;
+  /* justify-content: space-between; */
+}
+
+.headerRight {
+  /* flex: 8; */
+  display: flex;
+  align-items: right;
+}
