@@ -1,8 +1,6 @@
 import { Grid } from '@mui/material';
-import React from 'react';
-import { CreateRoomButton } from '../components/button/CreateRoomButton';
 import ActionAreaCard from '../components/card/Card';
-
+import FormModal from './../components/modal/FormModal';
 const cardContents = [
   {
     title: 'Reactについて',
@@ -35,6 +33,7 @@ const getCardContent = (getObj) => {
 };
 
 export const RoomsList = () => {
+  const url = '/newRoom';
   return (
     <>
       <Grid container direction='column'>
@@ -49,7 +48,7 @@ export const RoomsList = () => {
         </Grid>
       </Grid>
       <Grid container justifyContent='center'>
-        <CreateRoomButton />
+        <FormModal url={url} />
       </Grid>
     </>
   );

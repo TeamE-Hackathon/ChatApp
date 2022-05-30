@@ -23,6 +23,11 @@ const io = new Server(server, {
   },
 });
 
+app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+const roomRouter = require('./routes/room');
+app.use('/rooms', roomRouter)
+
 // for TPC servers
 server.listen(3001, () => {
   console.log('Started api server on 3001');
