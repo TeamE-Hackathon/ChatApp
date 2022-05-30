@@ -3,6 +3,7 @@ import Header from './components/header/Header';
 import { NewChat } from './pages/Chat';
 import { NewRoom } from './pages/new_room/NewRoom';
 import { SignIn } from './pages/signin/SignIn';
+import { SignUp } from './pages/signup/SignUp';
 import { RoomsList } from './pages/Top';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
       <Routes>
         <Route path='/' element={<RoomsList />} />
         <Route path='/signin' element={<SignIn />} />
+        <Route path='/signup' element={<SignUp />} />
         <Route path='/rooms/new' element={<NewRoom />} />
         <Route path='/rooms/:id' element={<NewChat />} />
       </Routes>
