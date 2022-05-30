@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Header from './components/header/Header';
-import { Chat } from './pages/chat/Chats';
+import { NewChat } from './pages/Chat';
 import { Login } from './pages/login/Login';
 import { NewRoom } from './pages/new_room/NewRoom';
 import { RoomsList } from './pages/Top';
@@ -17,7 +17,7 @@ function App() {
         <Route path='/' element={<RoomsList />} />
         <Route path='/login' element={<Login />} />
         <Route path='/rooms/new' element={<NewRoom />} />
-        <Route path='/rooms/:id' element={<Chat />} />
+        <Route path='/rooms/:id' element={<NewChat />} />
       </Routes>
     </BrowserRouter>
   );
