@@ -35,10 +35,12 @@ export const SignUp = () => {
   const [password, setPassword] = useState('');
   const [userFirstName, setUserFirstName] = useState('');
   const [userLastName, setUserLastName] = useState('');
+  const [agree, setAgree] = useState(false);
   const onChangeEmail = (event) => setEmail(event.target.value);
   const onChangePassword = (event) => setPassword(event.target.value);
   const onChangeUserFirstName = (event) => setUserFirstName(event.target.value);
   const onChangeUserLastName = (event) => setUserLastName(event.target.value);
+  const onChangeAgree = (event) => setAgree(event.target.checked);
 
   const auth = getAuth();
   const createAccount = (email, password) => {
@@ -46,11 +48,10 @@ export const SignUp = () => {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log(`user: ${user}`);
-
         user.displayName = `${userFirstName} ${userLastName}`;
         user.firstName = userFirstName;
         user.lastName = userLastName;
+        console.log(`user: ${user}`);
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -128,7 +129,7 @@ export const SignUp = () => {
                   required
                   fullWidth
                   name='password'
-                  label='Password'
+                  label='Password (8文字以上)'
                   type='password'
                   id='password'
                   autoComplete='new-password'
@@ -137,7 +138,7 @@ export const SignUp = () => {
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
-                  control={<Checkbox value='allowExtraEmails' color='primary' />}
+                  control={<Checkbox value='allowExtraEmails' color='primary' onChange={onChangeAgree} />}
                   label='利用規約に同意します'
                 />
               </Grid>
@@ -148,6 +149,7 @@ export const SignUp = () => {
               variant='contained'
               sx={{ mt: 3, mb: 2 }}
               onClick={() => createAccount(email, password)}
+              disabled={!(email !== '' && password.length > 7 && userFirstName !== '' && userLastName !== '' && agree)}
             >
               Sign Up
             </Button>
