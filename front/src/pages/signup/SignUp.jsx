@@ -43,23 +43,28 @@ export const SignUp = () => {
   const onChangeAgree = (event) => setAgree(event.target.checked);
 
   const auth = getAuth();
+  const updateAdditionalProfile = () => {
+    const additionalProfile = {
+      displayName: `${userFirstName} ${userLastName}`,
+      photoURL: 'https://example.com/jane-q-user/profile.jpg',
+    };
+    updateProfile(auth.currentUser, additionalProfile)
+      .then(() => {
+        // Profile updated!
+        console.log({ updatedUser: auth.currentUser });
+      })
+      .catch((error) => {
+        console.log({ error: error });
+      });
+  };
+
   const createAccount = (email, password) => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
         console.log({ user: user });
-        updateProfile(auth.currentUser, {
-          displayName: `${userFirstName} ${userLastName}`,
-          photoURL: 'https://example.com/jane-q-user/profile.jpg',
-        })
-          .then(() => {
-            // Profile updated!
-            console.log({ updatedUser: user });
-          })
-          .catch((error) => {
-            console.log({ error: error });
-          });
+        updateAdditionalProfile();
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -70,11 +75,11 @@ export const SignUp = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
     console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+      email: email,
+      password: password,
     });
+    createAccount(email, password);
   };
 
   return (
@@ -155,7 +160,6 @@ export const SignUp = () => {
               fullWidth
               variant='contained'
               sx={{ mt: 3, mb: 2 }}
-              onClick={() => createAccount(email, password)}
               disabled={!(email !== '' && password.length > 7 && userFirstName !== '' && userLastName !== '' && agree)}
             >
               Sign Up
