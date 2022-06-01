@@ -11,7 +11,7 @@ import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, updateProfile } from 'firebase/auth';
 import * as React from 'react';
 import { useState } from 'react';
 
@@ -48,16 +48,23 @@ export const SignUp = () => {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        user.displayName = `${userFirstName} ${userLastName}`;
-        user.firstName = userFirstName;
-        user.lastName = userLastName;
-        console.log(`user: ${user}`);
+        console.log({ user: user });
+        updateProfile(auth.currentUser, {
+          displayName: `${userFirstName} ${userLastName}`,
+          photoURL: 'https://example.com/jane-q-user/profile.jpg',
+        })
+          .then(() => {
+            // Profile updated!
+            console.log({ updatedUser: user });
+          })
+          .catch((error) => {
+            console.log({ error: error });
+          });
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log(`errorCode: ${errorCode}`);
-        console.log(`errorMessage: ${errorMessage}`);
+        console.log({ errorCode: errorCode, errorMessage: errorMessage });
       });
   };
 

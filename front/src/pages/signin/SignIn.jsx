@@ -11,6 +11,7 @@ import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import * as React from 'react';
 
 function Copyright(props) {
@@ -29,13 +30,31 @@ function Copyright(props) {
 const theme = createTheme();
 
 export const SignIn = () => {
+  const auth = getAuth();
+  const signIn = (email, password) => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log({ user: user });
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log({ errorCode: errorCode, errorMessage: errorMessage });
+      });
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    const email = data.get('email');
+    const password = data.get('password');
     console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+      email: email,
+      password: password,
     });
+    signIn(email, password);
   };
 
   return (
