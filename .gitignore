@@ -15,3 +15,6 @@ rest.http
 node_modules/
 .env
 .dynamodb-local-data/
+
+**/.firebase
+**/.firebaserc

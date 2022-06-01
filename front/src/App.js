@@ -1,8 +1,9 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Header from './components/header/Header';
 import { NewChat } from './pages/Chat';
-import { Login } from './pages/login/Login';
 import { NewRoom } from './pages/new_room/NewRoom';
+import { SignIn } from './pages/signin/SignIn';
+import { SignUp } from './pages/signup/SignUp';
 import { RoomsList } from './pages/Top';
 
 function App() {
@@ -15,7 +16,8 @@ function App() {
       </nav>
       <Routes>
         <Route path='/' element={<RoomsList />} />
-        <Route path='/login' element={<Login />} />
+        <Route path='/signin' element={<SignIn />} />
+        <Route path='/signup' element={<SignUp />} />
         <Route path='/rooms/new' element={<NewRoom />} />
         <Route path='/rooms/:id' element={<NewChat />} />
       </Routes>
