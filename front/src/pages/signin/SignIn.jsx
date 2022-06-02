@@ -13,19 +13,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import * as React from 'react';
-
-function Copyright(props) {
-  return (
-    <Typography variant='body2' color='text.secondary' align='center' {...props}>
-      {'Copyright © '}
-      <Link color='inherit' href='https://mui.com/'>
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import { Copyright } from '../../components/footer/Copyright';
 
 const theme = createTheme();
 
