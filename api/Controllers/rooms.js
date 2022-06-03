@@ -18,12 +18,12 @@ module.exports = {
     }
   },
   postNewRoom: async (req, res) => {
-    console.log("postNewRoom_param", req);
+    console.log("postNewRoom_param.body", req.body);
 
     const postNewRoomParam = {
       TableName: TABLENAME,
       Item: {
-        room_name: req.body.detail, // For example, 'Season': 2
+        room_name: req.body.roomName, // For example, 'Season': 2
         created_at: nowTime(), // For example,  'Episode': 2 (only required if table has sort key)
         detail: req.body.detail, //For example 'Title': 'The Beginning'
       },
