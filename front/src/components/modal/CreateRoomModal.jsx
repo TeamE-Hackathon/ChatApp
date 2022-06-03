@@ -9,7 +9,7 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 
-export default function FormModal({ url }) {
+export function CreateRoomModal({ url }) {
   const [open, setOpen] = useState(false);
   console.log(url);
 
@@ -81,6 +81,6 @@ export default function FormModal({ url }) {
   );
 }
 
-FormModal.propTypes = {
+CreateRoomModal.propTypes = {
   url: PropTypes.string,
 };

@@ -4,17 +4,18 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
-import * as React from 'react';
 
 export default function ActionAreaCard(props) {
-  const { title, detail, imageUrl } = props;
+  console.log('p', props);
+  const { room_name, created_at, detail } = props; // eslint-disable-line no-unused-vars
+  const imageUrl = 'https://picsum.photos/150';
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardActionArea>
-        <CardMedia component='img' height='140' image={imageUrl} alt={title} />
+        <CardMedia component='img' height='140' image={imageUrl} alt={room_name} />
         <CardContent>
           <Typography gutterBottom variant='h5' component='div'>
-            {title}
+            {room_name}
           </Typography>
           <Typography variant='body2' color='text.secondary'>
             {detail}
@@ -26,7 +27,8 @@ export default function ActionAreaCard(props) {
 }
 
 ActionAreaCard.propTypes = {
-  title: PropTypes.string.isRequired,
+  room_name: PropTypes.string.isRequired,
+  created_at: PropTypes.string.isRequired,
   detail: PropTypes.string.isRequired,
-  imageUrl: PropTypes.string,
+  // imageUrl: PropTypes.string,
 };
