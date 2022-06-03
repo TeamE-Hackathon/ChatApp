@@ -1,0 +1,5 @@
+.hamburgerMenuIcon {
+  color: black;
+  position: absolute;
+  z-index: 10000;
+}

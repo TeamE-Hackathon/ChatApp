@@ -1,11 +1,14 @@
 .headerLeft {
   flex: 4;
   display: flex;
-  /* justify-content: space-between; */
+  align-items: center;
+}
+
+.headerLogo {
+  margin-right: 8px;
 }
 
 .headerRight {
-  /* flex: 8; */
   display: flex;
-  align-items: right;
+  align-items: center;
 }
