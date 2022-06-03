@@ -34,7 +34,7 @@ export function CreateRoomModal({ url }) {
       },
     }).then((res) => {
       console.log('res', res.data);
-      window.location.href = '/rooms/:' + roomNameValue;
+      window.location.href = '/rooms/' + roomNameValue;
     });
 
     setOpen(false);
