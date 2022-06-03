@@ -42,7 +42,7 @@ export default function FormModal({ url }) {
 
   return (
     <div>
-      <Button variant='outlined' onClick={handleClickOpen}>
+      <Button variant='outlined' onClick={handleClickOpen} sx={{ display: { xs: 'none', sm: 'flex' } }}>
         部屋を作成する
       </Button>
       <Dialog open={open} onClose={handleCancel}>
