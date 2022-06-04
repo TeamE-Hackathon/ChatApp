@@ -36,9 +36,7 @@ export const RoomsList = () => {
           <Grid sm={2} />
         </Grid>
       </Grid>
-      <Grid container justifyContent='center'>
-        <CreateRoomModal url={url} />
-      </Grid>
+      <CreateRoomModal url={url} />
     </>
   );
 };

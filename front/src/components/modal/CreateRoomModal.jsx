@@ -1,9 +1,11 @@
+import AddIcon from '@mui/icons-material/Add';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Fab from '@mui/material/Fab';
 import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import PropTypes from 'prop-types';
@@ -42,9 +44,14 @@ export function CreateRoomModal({ url }) {
 
   return (
     <div>
-      <Button variant='outlined' onClick={handleClickOpen} sx={{ display: { xs: 'none', sm: 'flex' } }}>
-        部屋を作成する
-      </Button>
+      <Fab
+        color='primary'
+        aria-label='add'
+        onClick={handleClickOpen}
+        sx={{ position: 'fixed', bottom: 16, right: 16 }}
+      >
+        <AddIcon />
+      </Fab>
       <Dialog open={open} onClose={handleCancel}>
         <DialogTitle>新しく部屋を作成する</DialogTitle>
         <DialogContent>
