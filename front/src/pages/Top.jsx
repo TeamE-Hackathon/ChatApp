@@ -1,28 +1,8 @@
 import { Grid } from '@mui/material';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import ActionAreaCard from '../components/card/Card';
-import FormModal from './../components/modal/FormModal';
-const cardContents = [
-  {
-    title: 'Reactについて',
-    detail: 'Reactについて、なんでも話してます。',
-    imageUrl: 'https://picsum.photos/150',
-  },
-  {
-    title: 'DynamoDBについて',
-    detail: 'AWSのNoSQLのサービスであるDynamoDBについて、興味ある方はぜひ',
-    imageUrl: 'https://picsum.photos/150',
-  },
-  {
-    title: '面接について',
-    detail: '面接でどんな質問があったかメモみたいに書いてます',
-    imageUrl: 'https://picsum.photos/150',
-  },
-  {
-    title: '学び方について',
-    detail: 'みんなどんな学習法があるか気になったので部屋作りました！',
-    imageUrl: 'https://picsum.photos/150',
-  },
-];
+import { CreateRoomModal } from './../components/modal/CreateRoomModal';
 
 const getCardContent = (getObj) => {
   return (
@@ -33,7 +13,16 @@ const getCardContent = (getObj) => {
 };
 
 export const RoomsList = () => {
+  const [rooms, setRooms] = useState([]);
   const url = '/newRoom';
+  useEffect(() => {
+    axios.defaults.headers.get['Access-Control-Allow-Origin'] = 'http://localhost:3001/';
+    axios.get('http://localhost:3001/rooms').then((res) => {
+      console.log('res.data', res.data);
+      setRooms(res.data);
+    });
+  }, []);
+
   return (
     <>
       <Grid container direction='column'>
@@ -41,15 +30,13 @@ export const RoomsList = () => {
           <Grid sm={2} />
           <Grid xs={12} sm={8}>
             <Grid container spacing={2}>
-              {cardContents.map((contentObj) => getCardContent(contentObj))}
+              {rooms.map((contentObj) => getCardContent(contentObj))}
             </Grid>
           </Grid>
           <Grid sm={2} />
         </Grid>
       </Grid>
-      <Grid container justifyContent='center'>
-        <FormModal url={url} />
-      </Grid>
+      <CreateRoomModal url={url} />
     </>
   );
 };

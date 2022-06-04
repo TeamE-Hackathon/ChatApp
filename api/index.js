@@ -13,10 +13,18 @@ const { nowTime } = require('./utils/dateTime');
 require('dotenv').config();
 const app = express();
 
+const allowedOrigins = 'http://localhost:3000';
+const options = {
+  origin: allowedOrigins
+};
+
+// Then pass these options to cors:
+app.use(cors(options));
+
 // open websocket on 3000
-app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
+  // TODO: もしかしたらこのCORSの設定いらないかも
   cors: {
     origin: 'http://localhost:3000',
     methods: ['GET', 'POST'],
