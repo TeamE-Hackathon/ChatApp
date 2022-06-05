@@ -14,12 +14,12 @@ const dynamoDB = new AWS.DynamoDB({ apiVersion: '2022-05-15' });
 const params = {
   TableName: 'rooms',
   AttributeDefinitions: [
-    { AttributeName: 'room_name', AttributeType: 'S' },
-    { AttributeName: 'created_at', AttributeType: 'S' },
+    { AttributeName: 'RoomName', AttributeType: 'S' },
+    { AttributeName: 'CreatedAt', AttributeType: 'S' },
   ],
   KeySchema: [
-    { AttributeName: 'room_name', KeyType: 'HASH' },
-    { AttributeName: 'created_at', KeyType: 'RANGE' },
+    { AttributeName: 'RoomName', KeyType: 'HASH' },
+    { AttributeName: 'CreatedAt', KeyType: 'RANGE' },
   ],
   ProvisionedThroughput: {
     ReadCapacityUnits: 10,
