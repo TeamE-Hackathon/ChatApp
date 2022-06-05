@@ -52,18 +52,20 @@ io.on('connection', (socket) => {
   socket.on('send_message', async (data) => {
     console.log('send_message', data);
     const params = {
-      TableName: 'chat',
+      TableName: 'chats',
       Item: {
-        name: data.author,
-        time: nowTime(),
-        chat_room: data.room,
-        message: data.message,
+        UserName: data.userName,
+        // time: nowTime(),
+        CreatedAt: data.createdAt,
+        RoomName: data.roomName,
+        Message: data.message,
       },
     };
     try {
-      const data = await ddbDocClient.send(new PutCommand(params));
-      console.log('Success - item added or updated', data);
-      return data;
+      const result = await ddbDocClient.send(new PutCommand(params));
+      console.log('Success - item added or updated', result);
+      console.log('broadcast_data: ', data);
+      socket.to(data.roomName).emit('receive_message', data);
     } catch (err) {
       console.log('Error', err);
     }

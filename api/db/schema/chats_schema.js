@@ -13,25 +13,25 @@ const dynamoDB = new AWS.DynamoDB({ apiVersion: '2022-05-15' });
 
 // 書き込みスループットを最大化させつつ、必要な探索を最小限で実現するためGSIを定義
 const params = {
-  TableName: 'chat',
+  TableName: 'chats',
   AttributeDefinitions: [
-    { AttributeName: 'name', AttributeType: 'S' },
-    { AttributeName: 'time', AttributeType: 'S' },
-    { AttributeName: 'chat_room', AttributeType: 'S' },
+    { AttributeName: 'UserName', AttributeType: 'S' },
+    { AttributeName: 'CreatedAt', AttributeType: 'S' },
+    { AttributeName: 'RoomName', AttributeType: 'S' },
   ],
   KeySchema: [
-    { AttributeName: 'name', KeyType: 'HASH' },
-    { AttributeName: 'time', KeyType: 'RANGE' },
+    { AttributeName: 'UserName', KeyType: 'HASH' },
+    { AttributeName: 'CreatedAt', KeyType: 'RANGE' },
   ],
   GlobalSecondaryIndexes: [
     {
-      IndexName: 'chat_global_index',
+      IndexName: 'chats_global_index',
       Projection: {
         ProjectionType: 'KEYS_ONLY',
       },
       KeySchema: [
-        { AttributeName: 'chat_room', KeyType: 'HASH' },
-        { AttributeName: 'time', KeyType: 'RANGE' },
+        { AttributeName: 'RoomName', KeyType: 'HASH' },
+        { AttributeName: 'CreatedAt', KeyType: 'RANGE' },
       ],
       ProvisionedThroughput: {
         ReadCapacityUnits: 10,

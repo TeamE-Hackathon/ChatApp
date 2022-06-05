@@ -11,7 +11,6 @@ module.exports = {
     };
     try {
       const data = await ddbDocClient.send(new ScanCommand(getAllRoomsParams));
-      console.log(data.Items);
       res.json(data.Items);
     } catch (err) {
       console.log("Error", err);
@@ -23,9 +22,9 @@ module.exports = {
     const postNewRoomParam = {
       TableName: TABLENAME,
       Item: {
-        room_name: req.body.roomName, // For example, 'Season': 2
-        created_at: nowTime(), // For example,  'Episode': 2 (only required if table has sort key)
-        detail: req.body.detail, //For example 'Title': 'The Beginning'
+        RoomName: req.body.roomName, // For example, 'Season': 2
+        CreatedAt: nowTime(), // For example,  'Episode': 2 (only required if table has sort key)
+        Detail: req.body.detail, //For example 'Title': 'The Beginning'
       },
     };
     try {

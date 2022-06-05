@@ -7,17 +7,17 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 export default function ActionAreaCard(props) {
   console.log('p', props);
-  const { room_name, created_at, detail } = props; // eslint-disable-line no-unused-vars
+  const { RoomName: roomName, CreatedAt: createdAt, Detail: detail } = props; // eslint-disable-line no-unused-vars
   const imageUrl = 'https://picsum.photos/150';
-  const roomUrl = '/rooms/' + room_name;
+  const roomUrl = '/rooms/' + roomName;
   return (
     <Card sx={{ maxWidth: 345 }}>
-      <Link to={roomUrl} style={{ textDecoration: 'none', color: 'gray' }}>
+      <Link to={roomUrl} state={{ roomName: roomName }} style={{ textDecoration: 'none', color: 'gray' }}>
         <CardActionArea>
-          <CardMedia component='img' height='140' image={imageUrl} alt={room_name} />
+          <CardMedia component='img' height='140' image={imageUrl} alt={roomName} />
           <CardContent>
             <Typography gutterBottom variant='h5' component='div'>
-              {room_name}
+              {roomName}
             </Typography>
             <Typography variant='body2' color='text.secondary'>
               {detail}
@@ -30,8 +30,8 @@ export default function ActionAreaCard(props) {
 }
 
 ActionAreaCard.propTypes = {
-  room_name: PropTypes.string.isRequired,
-  created_at: PropTypes.string.isRequired,
-  detail: PropTypes.string.isRequired,
+  RoomName: PropTypes.string.isRequired,
+  CreatedAt: PropTypes.string.isRequired,
+  Detail: PropTypes.string.isRequired,
   // imageUrl: PropTypes.string,
 };
