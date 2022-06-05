@@ -1,19 +1,46 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import ScrollToButtom from 'react-scroll-to-bottom';
+import io from 'socket.io-client';
 import { SendMessageButton } from '../../components/button/SendMessageButton';
 import './Chat.css';
 
-export const Chat = ({ socket, username, room }) => {
+
+export const Chat = () => {
+  const socket = io.connect('http://localhost:3001');
+
+  // get pass props
+  const location = useLocation();
+  const { roomName } = location.state;
+
+  // ToDo: dbからその部屋の名前でデータを取得する
+  // 部屋が作られていない場合は、アラート出してTOPページに遷移
+
+  // ToDo: ログインユーザーを取得
+  let userName = 'sato';
+
+  // emit join event
+  const joinRoom = () => {
+    if (userName !== '' && roomName !== '') {
+      console.log('join the room: ', roomName);
+      socket.emit('join_room', roomName);
+    }
+  };
+  useEffect(() => {
+    joinRoom();
+  }, []);
+
   const [currentMessage, setcurrentMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
+
   const sendMessage = async () => {
     if (currentMessage !== '') {
       const messageData = {
-        room: room,
-        author: username,
-        message: currentMessage,
-        time: new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes(),
+        'roomName': roomName,
+        'userName': userName,
+        'message': currentMessage,
+        'createdAt': new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes(),
       };
 
       await socket.emit('send_message', messageData);
@@ -33,22 +60,21 @@ export const Chat = ({ socket, username, room }) => {
   return (
     <div className='chat-window'>
       <div className='chat-header'>
-        {/* TODO: Room名表示する？*/}
-        <p>Room : </p>
+        <p>{roomName} </p>
       </div>
       <div className='chat-body'>
         <ScrollToButtom className='message-container'>
           {messageList.map((messageContent, index) => {
             console.log('mesageContent', messageContent);
             return (
-              <div key={index} className='message' id={username === messageContent.author ? 'you' : 'other'}>
+              <div key={index} className='message' id={userName === messageContent.userName ? 'you' : 'other'}>
                 <div>
                   <div className='message-content'>
                     <p>{messageContent.message}</p>
                   </div>
                   <div className='message-meta'>
-                    <p id='time'>{messageContent.time}</p>
-                    <p id='author'>{messageContent.author}</p>
+                    <p id='createdAt'>{messageContent.createdAt}</p>
+                    <p id='userName'>{messageContent.userName}</p>
                   </div>
                 </div>
               </div>
@@ -74,6 +100,6 @@ export const Chat = ({ socket, username, room }) => {
 
 Chat.propTypes = {
   socket: PropTypes.string.isRequired,
-  username: PropTypes.string.isRequired,
+  userName: PropTypes.string.isRequired,
   room: PropTypes.string.isRequired,
 };
