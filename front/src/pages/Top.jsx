@@ -18,7 +18,6 @@ export const RoomsList = () => {
   useEffect(() => {
     axios.defaults.headers.get['Access-Control-Allow-Origin'] = 'http://localhost:3001/';
     axios.get('http://localhost:3001/rooms').then((res) => {
-      console.log('res.data', res.data);
       setRooms(res.data);
     });
   }, []);
