@@ -13,7 +13,8 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import * as React from 'react';
-import { Copyright } from '../../components/footer/Copyright';
+import { Link as RouterLink } from 'react-router-dom';
+import { Copyright } from '../components/footer/Copyright';
 
 const theme = createTheme();
 
@@ -95,13 +96,13 @@ export const SignIn = () => {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href='#' variant='body2'>
+                <Link component={RouterLink} to='/signup' variant='body2'>
                   パスワードを忘れた場合
                 </Link>
               </Grid>
               <Grid item>
-                <Link href='#' variant='body2'>
-                  {'新規登録はこちら'}
+                <Link component={RouterLink} to='/signup' variant='body2'>
+                  新規登録はこちら
                 </Link>
               </Grid>
             </Grid>

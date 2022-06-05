@@ -14,7 +14,8 @@ import Typography from '@mui/material/Typography';
 import { createUserWithEmailAndPassword, getAuth, updateProfile } from 'firebase/auth';
 import * as React from 'react';
 import { useState } from 'react';
-import { Copyright } from '../../components/footer/Copyright';
+import { Link as RouterLink } from 'react-router-dom';
+import { Copyright } from '../components/footer/Copyright';
 
 const theme = createTheme();
 
@@ -154,7 +155,7 @@ export const SignUp = () => {
             </Button>
             <Grid container justifyContent='flex-end'>
               <Grid item>
-                <Link href='#' variant='body2'>
+                <Link component={RouterLink} to='/signin' variant='body2'>
                   アカウントを既にお持ちの方はこちら
                 </Link>
               </Grid>
