@@ -8,6 +8,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Copyright } from '../components/footer/Copyright';
 
 const theme = createTheme();
@@ -20,6 +21,7 @@ const signInButton = {
 };
 
 export const SnsSignIn = () => {
+  const navigate = useNavigate();
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
   const googleSignIn = () => {
@@ -31,6 +33,7 @@ export const SnsSignIn = () => {
         // The signed-in user info.
         const user = result.user;
         console.log({ token: token, user: user });
+        navigate('/');
       })
       .catch((error) => {
         console.log(error);
