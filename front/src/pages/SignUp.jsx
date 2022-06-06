@@ -14,19 +14,8 @@ import Typography from '@mui/material/Typography';
 import { createUserWithEmailAndPassword, getAuth, updateProfile } from 'firebase/auth';
 import * as React from 'react';
 import { useState } from 'react';
-
-function Copyright(props) {
-  return (
-    <Typography variant='body2' color='text.secondary' align='center' {...props}>
-      {'Copyright © '}
-      <Link color='inherit' href='https://mui.com/'>
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import { Link as RouterLink } from 'react-router-dom';
+import { Copyright } from '../components/footer/Copyright';
 
 const theme = createTheme();
 
@@ -166,7 +155,7 @@ export const SignUp = () => {
             </Button>
             <Grid container justifyContent='flex-end'>
               <Grid item>
-                <Link href='#' variant='body2'>
+                <Link component={RouterLink} to='/signin' variant='body2'>
                   アカウントを既にお持ちの方はこちら
                 </Link>
               </Grid>
