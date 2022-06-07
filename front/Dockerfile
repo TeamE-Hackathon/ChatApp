@@ -1,5 +1,5 @@
 # Pull the Node image from Docker Hub
-FROM node:alpine
+FROM node:18-alpine3.14
 
 # Setting Working Directory
 WORKDIR /usr/src/app
