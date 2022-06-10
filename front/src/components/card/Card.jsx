@@ -9,10 +9,9 @@ export default function ActionAreaCard(props) {
   console.log('p', props);
   const { RoomName: roomName, CreatedAt: createdAt, Detail: detail } = props; // eslint-disable-line no-unused-vars
   const imageUrl = 'https://picsum.photos/150';
-  const roomUrl = '/rooms/' + roomName;
   return (
     <Card sx={{ maxWidth: 345 }}>
-      <Link to={roomUrl} state={{ roomName: roomName }} style={{ textDecoration: 'none', color: 'gray' }}>
+      <Link to={`/rooms/${roomName}`} state={{ roomName: roomName }} style={{ textDecoration: 'none', color: 'gray' }}>
         <CardActionArea>
           <CardMedia component='img' height='140' image={imageUrl} alt={roomName} />
           <CardContent>
