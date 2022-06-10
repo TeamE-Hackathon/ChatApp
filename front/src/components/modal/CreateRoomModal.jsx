@@ -10,11 +10,11 @@ import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export function CreateRoomModal({ url }) {
+export function CreateRoomModal() {
+  let navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  console.log(url);
-
   const [roomNameValue, setRoomNameValue] = useState('');
   const [detailValue, setDetailValue] = useState('');
 
@@ -36,7 +36,7 @@ export function CreateRoomModal({ url }) {
       },
     }).then((res) => {
       console.log('res', res.data);
-      window.location.href = '/rooms/' + roomNameValue;
+      navigate(`/rooms/${roomNameValue}`, { state: { roomName: roomNameValue } });
     });
 
     setOpen(false);
