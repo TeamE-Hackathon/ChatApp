@@ -4,52 +4,63 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { styled } from '@mui/system';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import HamburgerMenu from '../menu/HamburgerMenu';
-import './Header.css';
+
+const HeaderLeft = styled('div')({
+  flex: 4,
+  display: 'flex',
+  alignItems: 'center',
+});
+
+const HeaderRight = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+});
 
 export default function Header() {
 
   return (
-    <Box sx={{ flexGrow: 1, borderBottom: 3, borderColor: 'blue' }}>
-      <AppBar style={{ position: 'fixed', backgroundColor: 'white' }}>
+    <Box sx={{ flexGrow: 1, borderBottom: 3, marginBottom: '8vh' }}>
+      <AppBar sx={{ position: 'fixed', backgroundColor: 'white', borderBottom: 3, borderColor: '#1976d2' }}>
         <Toolbar>
-          <div className='headerLeft'>
+          <HeaderLeft>
             <div className='headerLogo'>
               <Link to='/' style={{ textDecoration: 'none', color: 'white' }}>
-                <ForumIcon style={{ fontSize: '40px', color: 'blue', marginTop: '10px' }} />
+                <ForumIcon color='primary' sx={{ fontSize: '40px', marginTop: '10px', marginRight:'5px' }} />
               </Link>
             </div>
             <div className='headerTitle'>
-              <Link to='/' style={{ textDecoration: 'none', color: 'white' }}>
+              <Link to='/' style={{ textDecoration: 'none' }}>
                 <Typography
                   variant='h6'
                   component='div'
-                  sx={{ flexGrow: 1 }}
-                  style={{ fontStyle: 'oblique', fontSize: '30px', color: 'blue' }}
+                  color='primary'
+                  sx={{ flexGrow: 1, fontStyle: 'oblique', fontSize: '30px' }}
                 >
                   Chat App
                 </Typography>
               </Link>
             </div>
-          </div>
-          <div className='headerRight'>
-            <Link to='/signin' style={{ textDecoration: 'none', color: 'white' }}>
-              <Button variant='outlined' style={{ marginRight: '10px' }} sx={{ display: { xs: 'none', sm: 'flex' } }}>
+          </HeaderLeft>
+          <HeaderRight>
+            <Link to='/signin' style={{ textDecoration: 'none' }}>
+              <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }} >
                 My Page
               </Button>
             </Link>
-            <Link to='/signin' style={{ textDecoration: 'none', color: 'white' }}>
-              <Button variant='outlined' style={{ marginRight: '10px' }} sx={{ display: { xs: 'none', sm: 'flex' } }}>
+            <Link to='/signin' style={{ textDecoration: 'none' }}>
+              <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}>
                 Sign in
               </Button>
             </Link>
-            <Button variant='outlined' style={{ marginRight: '10px' }} sx={{ display: { xs: 'none', sm: 'flex' } }}>
+            <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}>
               Sign out
             </Button>
             <HamburgerMenu />
-          </div>
+          </HeaderRight>
         </Toolbar>
       </AppBar>
     </Box>
