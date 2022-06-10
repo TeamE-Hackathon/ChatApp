@@ -5,9 +5,13 @@ import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/system';
-import React from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { auth } from '../../firebase';
 import HamburgerMenu from '../menu/HamburgerMenu';
+
+console.log(auth);
 
 const HeaderLeft = styled('div')({
   flex: 4,
@@ -21,9 +25,20 @@ const HeaderRight = styled('div')({
 });
 
 export default function Header() {
+  /* ↓state変数「user」を定義 */
+  const [user, setUser] = useState('');
+  console.log(user.displayName);
+
+  /* ↓ログインしているかどうかを判定する */
+  useEffect(() => {
+    onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+  }, []);
+  const username = '/mypages/' + user.displayName;
 
   return (
-    <Box sx={{ flexGrow: 1, borderBottom: 3, marginBottom: '8vh' }}>
+    <Box sx={{ flexGrow: 1, borderBottom: 3, marginBottom: '10vh' }}>
       <AppBar sx={{ position: 'fixed', backgroundColor: 'white', borderBottom: 3, borderColor: '#1976d2' }}>
         <Toolbar>
           <HeaderLeft>
@@ -46,20 +61,25 @@ export default function Header() {
             </div>
           </HeaderLeft>
           <HeaderRight>
-            <Link to='/signin' style={{ textDecoration: 'none' }}>
-              <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }} >
-                My Page
-              </Button>
-            </Link>
-            <Link to='/signin' style={{ textDecoration: 'none' }}>
-              <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}>
-                Sign in
-              </Button>
-            </Link>
-            <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}>
-              Sign out
-            </Button>
-            <HamburgerMenu />
+            {!user ? (
+              <Link to='/signin' style={{ textDecoration: 'none' }}>
+                <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}>
+                  Sign in
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}>
+                  Sign out
+                </Button>
+                <Link to={username} style={{ textDecoration: 'none' }}>
+                  <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }} >
+                    My Page
+                  </Button>
+                </Link>
+                <HamburgerMenu />
+              </>
+            )}
           </HeaderRight>
         </Toolbar>
       </AppBar>
