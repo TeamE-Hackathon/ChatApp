@@ -10,7 +10,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: push ECR
-        uses: ./infra/build.sh
+        run: |
+          ./infra/build.sh
 
   front-build:
     runs-on: ubuntu-latest
@@ -18,6 +19,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: sync S3
-        uses: ./infra/ship.sh
+        run: |
+          ./infra/ship.sh
   # front-ship:
   # front-ship:
