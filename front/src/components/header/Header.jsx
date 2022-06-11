@@ -27,7 +27,6 @@ const HeaderRight = styled('div')({
 export default function Header() {
   /* ↓state変数「user」を定義 */
   const [user, setUser] = useState('');
-  console.log(user.displayName);
 
   /* ↓ログインしているかどうかを判定する */
   useEffect(() => {
@@ -35,7 +34,6 @@ export default function Header() {
       setUser(currentUser);
     });
   }, []);
-  const username = '/mypages/' + user.displayName;
 
   return (
     <Box sx={{ flexGrow: 1, borderBottom: 3, marginBottom: '10vh' }}>
@@ -72,14 +70,14 @@ export default function Header() {
                 <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}>
                   Sign out
                 </Button>
-                <Link to={username} style={{ textDecoration: 'none' }}>
+                <Link to={`/mypages/${user.displayName}`} style={{ textDecoration: 'none' }}>
                   <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }} >
                     My Page
                   </Button>
                 </Link>
-                <HamburgerMenu />
               </>
             )}
+            <HamburgerMenu />
           </HeaderRight>
         </Toolbar>
       </AppBar>

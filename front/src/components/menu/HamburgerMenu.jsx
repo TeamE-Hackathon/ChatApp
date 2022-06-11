@@ -5,11 +5,24 @@ import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import * as React from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import './HamburgerMenu.css';
+import { auth } from '../../firebase';
+
+console.log(auth);
 
 export default function HamburgerMenu() {
+  /* ↓state変数「user」を定義 */
+  const [user, setUser] = useState('');
+  
+  /* ↓ログインしているかどうかを判定する */
+  useEffect(() => {
+    onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+  }, []);
+
   const [state, setState] = React.useState({
     top: false,
     left: false,
@@ -33,23 +46,29 @@ export default function HamburgerMenu() {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List component='nav'>
-        <Link to='/signin' style={{ textDecoration: 'none', color: 'black' }}>
-          <ListItem>
-            <ListItemText primary='MY PAGE' />
-          </ListItem>
-        </Link>
-        <Link to='/signin' style={{ textDecoration: 'none', color: 'black' }}>
-          <ListItem>
-            <ListItemText primary='SIGN IN' />
-          </ListItem>
-        </Link>
-        <Link to='/' style={{ textDecoration: 'none', color: 'black' }}>
-          <ListItem>
-            <ListItemText primary='SIGN OUT' />
-          </ListItem>
-        </Link>
+        {!user ? (
+          <Link to='/signin' style={{ textDecoration: 'none', color: '#1976d2' }}>
+            <ListItem>
+              <ListItemText primary='SIGN IN' />
+            </ListItem>
+          </Link>
+        ) : (
+          <>
+            <Link to='/' style={{ textDecoration: 'none', color: '#1976d2' }}>
+              <ListItem>
+                <ListItemText primary='SIGN OUT' />
+              </ListItem>
+            </Link>
+            <Divider />
+            <Link to={`/mypages/${user.displayName}`} style={{ textDecoration: 'none', color: '#1976d2' }}>
+              <ListItem>
+                <ListItemText primary='MY PAGE' />
+              </ListItem>
+            </Link>
+          </>
+        )}
+        <Divider />
       </List>
-      <Divider />
 
     </Box>
   );
@@ -59,8 +78,8 @@ export default function HamburgerMenu() {
       {['•••'].map((anchor) => (
         <React.Fragment key={anchor}>
           <MenuIcon
-            style={{ color: 'blue', cursor: 'pointer' }}
-            sx={{ display: { xs: 'flex', sm: 'none' } }}
+            color='primary'
+            sx={{ cursor: 'pointer', display: { xs: 'flex', sm: 'none' } }}
             onClick={toggleDrawer(anchor, true)}
           />
           <Drawer anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
