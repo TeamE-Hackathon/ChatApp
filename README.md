@@ -6,11 +6,11 @@
     # frontとapiのコンテナ起動
     docker compose up
 
-    # 既にイメージがある場合に、ビルドし直してコンテナを起動したい時
-    docker compose build --no-cache && docker compose up
-
-    # frontとapiのコンテナ停止
+    #（frontとapiのコンテナ停止）
     docker compose down
+
+    # (Module not found: Error: Can't resolve ...というエラーが出た場合)
+    ./fix-deps.sh
 
 ## DynamoDB テーブル操作方法
 
