@@ -14,17 +14,17 @@
 
 ## DynamoDB テーブル操作方法
 
-    # テーブル作成(例. chatテーブル作成)
-    ./local.sh create_table chat
+    # テーブル作成(例. chatsテーブル作成)
+    ./local.sh create_table chats
 
     # テーブル一覧取得
     ./local.sh list_tables
 
     # テーブル情報表示
-    ./local.sh describe_table chat
+    ./local.sh describe_table chats
 
-    # テーブル削除(例. chatテーブル削除)
-    ./local.sh delete_table chat
+    # テーブル削除(例. chatsテーブル削除)
+    ./local.sh delete_table chats
 
 ## ツール
 
