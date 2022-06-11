@@ -10,13 +10,11 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { auth } from '../../firebase';
 
-
 console.log(auth);
 
 export default function HamburgerMenu() {
   /* ↓state変数「user」を定義 */
   const [user, setUser] = useState('');
-  // console.log(user.displayName);
   
   /* ↓ログインしているかどうかを判定する */
   useEffect(() => {
@@ -24,7 +22,6 @@ export default function HamburgerMenu() {
       setUser(currentUser);
     });
   }, []);
-  // const username = '/mypages/' + user.displayName;
 
   const [state, setState] = React.useState({
     top: false,
