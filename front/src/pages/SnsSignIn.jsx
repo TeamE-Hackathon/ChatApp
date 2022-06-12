@@ -4,11 +4,12 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
+import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import * as React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Copyright } from '../components/footer/Copyright';
 
 const theme = createTheme();
@@ -67,6 +68,13 @@ export const SnsSignIn = () => {
           <Button type='submit' variant='text' sx={{ mt: 0.1, mb: 2 }} onClick={twitterSignIn}>
             <img src='sign-in-with-twitter-gray.png' alt='Sign in with Twitter' style={signInButton} />
           </Button>
+          <Grid container justifyContent='flex-end' sx={{ mt: 3, mb: 1 }}>
+            <Grid item>
+              <Link component={RouterLink} to='/signin' variant='body2'>
+                Emailでサインイン
+              </Link>
+            </Grid>
+          </Grid>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
