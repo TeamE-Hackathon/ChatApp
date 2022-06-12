@@ -5,9 +5,9 @@ import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/system';
-import { onAuthStateChanged } from 'firebase/auth';
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../../firebase';
 import HamburgerMenu from '../menu/HamburgerMenu';
 
@@ -25,14 +25,22 @@ const HeaderRight = styled('div')({
 });
 
 export default function Header() {
-  /* ↓state変数「user」を定義 */
+  const navigate = useNavigate();
   const [user, setUser] = useState('');
 
-  /* ↓ログインしているかどうかを判定する */
+  const userSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        console.log('Sign-out successful.');
+        navigate('/sns-signin');
+      })
+      .catch((error) => {
+        console.log({ error: error });
+      });
+  };
+
   useEffect(() => {
-    onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
+    onAuthStateChanged(auth, (currentUser) => setUser(currentUser));
   }, []);
 
   return (
@@ -42,7 +50,7 @@ export default function Header() {
           <HeaderLeft>
             <div className='headerLogo'>
               <Link to='/' style={{ textDecoration: 'none', color: 'white' }}>
-                <ForumIcon color='primary' sx={{ fontSize: '40px', marginTop: '10px', marginRight:'5px' }} />
+                <ForumIcon color='primary' sx={{ fontSize: '40px', marginTop: '10px', marginRight: '5px' }} />
               </Link>
             </div>
             <div className='headerTitle'>
@@ -60,21 +68,25 @@ export default function Header() {
           </HeaderLeft>
           <HeaderRight>
             {!user ? (
-              <Link to='/signin' style={{ textDecoration: 'none' }}>
+              <Link to='/sns-signin' style={{ textDecoration: 'none' }}>
                 <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}>
                   Sign in
                 </Button>
               </Link>
             ) : (
               <>
-                <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}>
-                  Sign out
-                </Button>
-                <Link to={`/mypages/${user.displayName}`} style={{ textDecoration: 'none' }}>
-                  <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }} >
+                <Link to={`/mypages/${user.uid}`} style={{ textDecoration: 'none' }}>
+                  <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}>
                     My Page
                   </Button>
                 </Link>
+                <Button
+                  onClick={userSignOut}
+                  variant='outlined'
+                  sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}
+                >
+                  Sign out
+                </Button>
               </>
             )}
             <HamburgerMenu />
