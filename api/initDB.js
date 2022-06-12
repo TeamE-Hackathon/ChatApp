@@ -3,7 +3,7 @@ const { fromEnv } = require('@aws-sdk/credential-providers'); // CommonJS import
 
 require('dotenv').config();
 const REGION = process.env.AWS_DEFAULT_REGION;
-const ENDPOINT = process.env.LOCAL_DYNAMO_DB_URL + ':' + process.env.DB_PORT;
+const ENDPOINT = process.env.DYNAMO_DB_URL + ':' + process.env.DB_PORT;
 
 // Bare-bones DynamoDB Client
 const ddbClient = new DynamoDBClient({
