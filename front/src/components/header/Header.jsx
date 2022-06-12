@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/system';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { auth } from '../../firebase';
@@ -26,6 +26,16 @@ const HeaderRight = styled('div')({
 
 export default function Header() {
   const [user, setUser] = useState('');
+
+  const userSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        console.log('Sign-out successful.');
+      })
+      .catch((error) => {
+        console.log({ error: error });
+      });
+  };
 
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => setUser(currentUser));
@@ -63,14 +73,18 @@ export default function Header() {
               </Link>
             ) : (
               <>
-                <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}>
-                  Sign out
-                </Button>
                 <Link to={`/mypages/${user.uid}`} style={{ textDecoration: 'none' }}>
                   <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}>
                     My Page
                   </Button>
                 </Link>
+                <Button
+                  onClick={userSignOut}
+                  variant='outlined'
+                  sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}
+                >
+                  Sign out
+                </Button>
               </>
             )}
             <HamburgerMenu />
