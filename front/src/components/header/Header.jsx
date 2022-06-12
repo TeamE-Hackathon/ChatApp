@@ -66,7 +66,7 @@ export default function Header() {
           </HeaderLeft>
           <HeaderRight>
             {!user ? (
-              <Link to='/signin' style={{ textDecoration: 'none' }}>
+              <Link to='/sns-signin' style={{ textDecoration: 'none' }}>
                 <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}>
                   Sign in
                 </Button>
