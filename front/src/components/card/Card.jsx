@@ -16,7 +16,6 @@ const getRandomPicture = () => {
 };
 
 export default function ActionAreaCard(props) {
-  console.log('p', props);
   const { RoomName: roomName, CreatedAt: createdAt, Detail: detail } = props; // eslint-disable-line no-unused-vars
   const picturePath = getRandomPicture();
   const imageUrl = `https://picsum.photos/id/${picturePath}`;
