@@ -6,7 +6,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/system';
 import { onAuthStateChanged } from 'firebase/auth';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { auth } from '../../firebase';
 import HamburgerMenu from '../menu/HamburgerMenu';
@@ -42,7 +42,7 @@ export default function Header() {
           <HeaderLeft>
             <div className='headerLogo'>
               <Link to='/' style={{ textDecoration: 'none', color: 'white' }}>
-                <ForumIcon color='primary' sx={{ fontSize: '40px', marginTop: '10px', marginRight:'5px' }} />
+                <ForumIcon color='primary' sx={{ fontSize: '40px', marginTop: '10px', marginRight: '5px' }} />
               </Link>
             </div>
             <div className='headerTitle'>
@@ -70,8 +70,8 @@ export default function Header() {
                 <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}>
                   Sign out
                 </Button>
-                <Link to={`/mypages/${user.displayName}`} style={{ textDecoration: 'none' }}>
-                  <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }} >
+                <Link to={`/mypages/${user.uid}`} style={{ textDecoration: 'none' }}>
+                  <Button variant='outlined' sx={{ marginRight: '10px', display: { xs: 'none', sm: 'flex' } }}>
                     My Page
                   </Button>
                 </Link>
