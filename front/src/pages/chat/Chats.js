@@ -6,8 +6,8 @@ import { SendMessageButton } from '../../components/button/SendMessageButton';
 import './Chat.css';
 
 
+const socket = io.connect('http://localhost:3001');
 export const Chat = () => {
-  const socket = io.connect('http://localhost:3001');
 
   // get pass props
   const location = useLocation();
