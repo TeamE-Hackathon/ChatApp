@@ -24,9 +24,12 @@ const signInButton = {
 
 export const SnsSignIn = () => {
   const [user, setUser] = useState('');
+  const [loaded, setLoaded] = useState(false);
+
   const navigate = useNavigate();
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
+
   const googleSignIn = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
@@ -47,48 +50,59 @@ export const SnsSignIn = () => {
   };
 
   useEffect(() => {
-    onAuthStateChanged(auth, (currentUser) => setUser(currentUser));
+    onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoaded(true);
+    });
   }, []);
 
   return (
     <>
-      {user ? (
-        <Navigate to={'/'} />
-      ) : (
-        <ThemeProvider theme={theme}>
-          <Container component='main' maxWidth='xs'>
-            <CssBaseline />
-            <Box
-              sx={{
-                marginTop: 8,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}
-            >
-              <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                <LockOutlinedIcon />
-              </Avatar>
-              <Typography component='h1' variant='h5'>
-                サインインして利用開始する
-              </Typography>
-              <Button type='submit' variant='text' sx={{ mt: 3, mb: 0.1 }} onClick={googleSignIn}>
-                <img src='btn_google_signin_light_normal_web@2x.png' alt='Sign in with Google' style={signInButton} />
-              </Button>
-              <Button type='submit' variant='text' sx={{ mt: 0.1, mb: 2 }} onClick={twitterSignIn}>
-                <img src='sign-in-with-twitter-gray.png' alt='Sign in with Twitter' style={signInButton} />
-              </Button>
-              <Grid container justifyContent='flex-end' sx={{ mt: 3, mb: 1 }}>
-                <Grid item>
-                  <Link component={RouterLink} to='/signin' variant='body2'>
-                    Emailでサインイン
-                  </Link>
-                </Grid>
-              </Grid>
-            </Box>
-            <Copyright sx={{ mt: 8, mb: 4 }} />
-          </Container>
-        </ThemeProvider>
+      {loaded && (
+        <>
+          {user ? (
+            <Navigate to={'/'} />
+          ) : (
+            <ThemeProvider theme={theme}>
+              <Container component='main' maxWidth='xs'>
+                <CssBaseline />
+                <Box
+                  sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                    <LockOutlinedIcon />
+                  </Avatar>
+                  <Typography component='h1' variant='h5'>
+                    サインインして利用開始する
+                  </Typography>
+                  <Button type='submit' variant='text' sx={{ mt: 3, mb: 0.1 }} onClick={googleSignIn}>
+                    <img
+                      src='btn_google_signin_light_normal_web@2x.png'
+                      alt='Sign in with Google'
+                      style={signInButton}
+                    />
+                  </Button>
+                  <Button type='submit' variant='text' sx={{ mt: 0.1, mb: 2 }} onClick={twitterSignIn}>
+                    <img src='sign-in-with-twitter-gray.png' alt='Sign in with Twitter' style={signInButton} />
+                  </Button>
+                  <Grid container justifyContent='flex-end' sx={{ mt: 3, mb: 1 }}>
+                    <Grid item>
+                      <Link component={RouterLink} to='/signin' variant='body2'>
+                        Emailでサインイン
+                      </Link>
+                    </Grid>
+                  </Grid>
+                </Box>
+                <Copyright sx={{ mt: 8, mb: 4 }} />
+              </Container>
+            </ThemeProvider>
+          )}
+        </>
       )}
     </>
   );
