@@ -27,6 +27,7 @@ export const Chat = () => {
   };
   useEffect(() => {
     joinRoom();
+    // ToDo: dbからmessage取得
   }, []);
 
   const [currentMessage, setcurrentMessage] = useState('');
