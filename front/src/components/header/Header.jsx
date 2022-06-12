@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/system';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../../firebase';
 import HamburgerMenu from '../menu/HamburgerMenu';
 
@@ -25,12 +25,14 @@ const HeaderRight = styled('div')({
 });
 
 export default function Header() {
+  const navigate = useNavigate();
   const [user, setUser] = useState('');
 
   const userSignOut = () => {
     signOut(auth)
       .then(() => {
         console.log('Sign-out successful.');
+        navigate('/sns-signin');
       })
       .catch((error) => {
         console.log({ error: error });
