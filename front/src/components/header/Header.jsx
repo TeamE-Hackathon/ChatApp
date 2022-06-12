@@ -25,14 +25,10 @@ const HeaderRight = styled('div')({
 });
 
 export default function Header() {
-  /* ↓state変数「user」を定義 */
   const [user, setUser] = useState('');
 
-  /* ↓ログインしているかどうかを判定する */
   useEffect(() => {
-    onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
+    onAuthStateChanged(auth, (currentUser) => setUser(currentUser));
   }, []);
 
   return (
