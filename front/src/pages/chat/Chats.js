@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import ScrollToButtom from 'react-scroll-to-bottom';
@@ -96,10 +95,4 @@ export const Chat = () => {
       </div>
     </div>
   );
-};
-
-Chat.propTypes = {
-  socket: PropTypes.string.isRequired,
-  userName: PropTypes.string.isRequired,
-  room: PropTypes.string.isRequired,
 };
