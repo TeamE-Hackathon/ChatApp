@@ -11,14 +11,18 @@ import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import * as React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
+import { useEffect, useState } from 'react';
+import { Link as RouterLink, Navigate, useNavigate } from 'react-router-dom';
 import { Copyright } from '../components/footer/Copyright';
 
 const theme = createTheme();
 
 export const SignIn = () => {
+  const [user, setUser] = useState('');
+  const [loaded, setLoaded] = useState(false);
+
+  const navigate = useNavigate();
   const auth = getAuth();
   const signIn = (email, password) => {
     signInWithEmailAndPassword(auth, email, password)
@@ -26,6 +30,7 @@ export const SignIn = () => {
         // Signed in
         const user = userCredential.user;
         console.log({ user: user });
+        navigate('/');
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -48,68 +53,85 @@ export const SignIn = () => {
     signIn(email, password);
   };
 
+  useEffect(() => {
+    onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoaded(true);
+    });
+  }, []);
+
   return (
-    <ThemeProvider theme={theme}>
-      <Container component='main' maxWidth='xs'>
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component='h1' variant='h5'>
-            Sign in
-          </Typography>
-          <Box component='form' onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin='normal'
-              required
-              fullWidth
-              id='email'
-              label='Email Address'
-              name='email'
-              autoComplete='email'
-              autoFocus
-            />
-            <TextField
-              margin='normal'
-              required
-              fullWidth
-              name='password'
-              label='Password'
-              type='password'
-              id='password'
-              autoComplete='current-password'
-            />
-            <FormControlLabel
-              control={<Checkbox value='remember' color='primary' name='label' />}
-              label='Remember me'
-            />
-            <Button type='submit' fullWidth variant='contained' sx={{ mt: 3, mb: 2 }}>
-              Sign In
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link component={RouterLink} to='/signup' variant='body2'>
-                  パスワードを忘れた場合
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link component={RouterLink} to='/signup' variant='body2'>
-                  新規登録はこちら
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
-      </Container>
-    </ThemeProvider>
+    <>
+      {loaded && (
+        <>
+          {user ? (
+            <Navigate to={'/'} />
+          ) : (
+            <ThemeProvider theme={theme}>
+              <Container component='main' maxWidth='xs'>
+                <CssBaseline />
+                <Box
+                  sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                    <LockOutlinedIcon />
+                  </Avatar>
+                  <Typography component='h1' variant='h5'>
+                    Sign in
+                  </Typography>
+                  <Box component='form' onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                    <TextField
+                      margin='normal'
+                      required
+                      fullWidth
+                      id='email'
+                      label='Email Address'
+                      name='email'
+                      autoComplete='email'
+                      autoFocus
+                    />
+                    <TextField
+                      margin='normal'
+                      required
+                      fullWidth
+                      name='password'
+                      label='Password'
+                      type='password'
+                      id='password'
+                      autoComplete='current-password'
+                    />
+                    <FormControlLabel
+                      control={<Checkbox value='remember' color='primary' name='label' />}
+                      label='Remember me'
+                    />
+                    <Button type='submit' fullWidth variant='contained' sx={{ mt: 3, mb: 2 }}>
+                      Sign In
+                    </Button>
+                    <Grid container>
+                      <Grid item xs>
+                        <Link component={RouterLink} to='/signup' variant='body2'>
+                          パスワードを忘れた場合
+                        </Link>
+                      </Grid>
+                      <Grid item>
+                        <Link component={RouterLink} to='/signup' variant='body2'>
+                          新規登録はこちら
+                        </Link>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </Box>
+                <Copyright sx={{ mt: 8, mb: 4 }} />
+              </Container>
+            </ThemeProvider>
+          )}
+        </>
+      )}
+    </>
   );
 };
