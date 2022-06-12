@@ -5,8 +5,7 @@ import io from 'socket.io-client';
 import { SendMessageButton } from '../../components/button/SendMessageButton';
 import './Chat.css';
 
-
-const socket = io.connect('http://localhost:3001');
+const socket = io.connect(`${process.env.REACT_APP_BASEURL}:3001`); // eslint-disable-line
 export const Chat = () => {
 
   // get pass props

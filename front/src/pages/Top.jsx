@@ -16,8 +16,9 @@ export const RoomsList = () => {
   const [rooms, setRooms] = useState([]);
   const url = '/newRoom';
   useEffect(() => {
-    axios.defaults.headers.get['Access-Control-Allow-Origin'] = 'http://localhost:3001/';
-    axios.get('http://localhost:3001/rooms').then((res) => {
+    axios.defaults.headers.get['Access-Control-Allow-Origin'] = `${process.env.REACT_APP_BASEURL}:3001`; // eslint-disable-line
+    // eslint-disable-next-line
+    axios.get(`${process.env.REACT_APP_BASEURL}:3001/rooms`).then((res) => {
       setRooms(res.data);
     });
   }, []);
