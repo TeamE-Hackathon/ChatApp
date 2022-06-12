@@ -25,14 +25,14 @@ export const RoomsList = () => {
   return (
     <>
       <Grid container direction='column'>
-        <Grid item container>
-          <Grid sm={2} />
-          <Grid xs={12} sm={8}>
+        <Grid container>
+          <Grid item sm={2} />
+          <Grid item xs={12} sm={8}>
             <Grid container spacing={2}>
               {rooms.map((contentObj) => getCardContent(contentObj))}
             </Grid>
           </Grid>
-          <Grid sm={2} />
+          <Grid item sm={2} />
         </Grid>
       </Grid>
       <CreateRoomModal url={url} />
