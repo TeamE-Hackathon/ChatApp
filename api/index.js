@@ -36,6 +36,10 @@ app.use(express.urlencoded({ extended: true })) // for parsing application/x-www
 const roomRouter = require('./routes/room');
 app.use('/rooms', roomRouter)
 
+// TODO: 36,37と似た感じで/chat
+// GET /chat?roomName=XXX, or bodyでパラメータ送る
+// routes/chat.js作成
+
 // for TPC servers
 server.listen(3001, () => {
   console.log('Started api server on 3001');
