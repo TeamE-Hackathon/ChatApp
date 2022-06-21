@@ -5,6 +5,7 @@ import { SignIn } from './pages/SignIn';
 import { SignUp } from './pages/SignUp';
 import { SnsSignIn } from './pages/SnsSignIn';
 import { RoomsList } from './pages/Top';
+import { MyPage } from './pages/MyPage';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path='/signin' element={<SignIn />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/rooms/:roomName' element={<Chat />} />
+        <Route path='/mypages/:userName' element={<MyPage />} />
         {/* <Route path='/rooms/:roomName' element={<NewChat />} /> ToDo: MUIで焼き直す */}
         <Route path='/sns-signin' element={<SnsSignIn />} />
       </Routes>
