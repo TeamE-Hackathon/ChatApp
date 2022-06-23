@@ -103,7 +103,7 @@ export const NewChat = () => {
         <Container sx={{ marginBottom: '5px' }}>
           <Divider color='#1976d2' sx={{ borderBottomWidth: 3 }} />
         </Container>
-        <Container sx={{ height: '70vh' }}>
+        <Container sx={{ height: '72vh', overflow: 'scroll' }}>
           <div className='chat-body'>
             <ScrollToButtom className='message-container'>
               {messageList.map((messageContent, index) => {
