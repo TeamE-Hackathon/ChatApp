@@ -2,11 +2,13 @@
 import { Divider, Input } from '@mui/material';
 import Container from '@mui/material/Container';
 import { styled } from '@mui/system';
+import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import ScrollToButtom from 'react-scroll-to-bottom';
 import io from 'socket.io-client';
 import { SendMessageButton } from '../components/button/SendMessageButton';
+import { auth } from '../firebase';
 
 const socket = io.connect(`${process.env.REACT_APP_BASEURL}:3001`); // eslint-disable-line
 export const NewChat = () => {
@@ -18,7 +20,7 @@ export const NewChat = () => {
   // 部屋が作られていない場合は、アラート出してTOPページに遷移
 
   // ToDo: ログインユーザーを取得
-  let userName = 'sato';
+  const [user, setUser] = useState('');
 
   // emit join event
   const joinRoom = () => {
@@ -28,8 +30,11 @@ export const NewChat = () => {
     }
   };
   useEffect(() => {
+    onAuthStateChanged(auth, (currentUser) => setUser(currentUser));
     joinRoom();
   }, []);
+
+  const userName = user.displayName;
 
   const [currentMessage, setcurrentMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
@@ -111,6 +116,7 @@ export const NewChat = () => {
                 return (
                   <div
                     key={index}
+                    id={userName === messageContent.userName ? 'you' : 'other'}
                     sx={
                       userName === messageContent.userName
                         ? { justifyContent: 'flex-start' }
