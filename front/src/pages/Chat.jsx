@@ -10,8 +10,8 @@ import io from 'socket.io-client';
 import { SendMessageButton } from '../components/button/SendMessageButton';
 
 
+const socket = io.connect('http://localhost:3001');
 export const NewChat = () => {
-  const socket = io.connect('http://localhost:3001');
   // const socket = io.connect(`${process.env.REACT_APP_BASEURL}:3001`); // eslint-disable-line
 
   // get pass props
@@ -40,16 +40,16 @@ export const NewChat = () => {
 
   const sendMessage = async () => {
     if (currentMessage !== '') {
-      // const messageData = { 
-      //   'roomName': roomName,
-      //   'userName': userName,
-      //   'message': currentMessage,
-      //   'createdAt': new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes(),
-      // };
+      const messageData = { 
+        'roomName': roomName,
+        'userName': userName,
+        'message': currentMessage,
+        'createdAt': new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes(),
+      };
 
-      // await socket.emit('send_message', messageData);
+      await socket.emit('send_message', messageData);
       // my new mesage
-      // setMessageList((list) => [...list, messageData]);
+      setMessageList((list) => [...list, messageData]);
       setcurrentMessage('');
     }
   };
@@ -72,57 +72,90 @@ export const NewChat = () => {
     fontWeight: '800',
   });
 
+  const ChatMessage = styled('div')({
+    width: 'auto',
+    height: 'auto',
+    minHeight: '40px',
+    maxWidth: '200px',
+    backgroundColor: '#1976d2',
+    borderRadius: '5px',
+    color: 'white',
+    display: 'flex',
+    alignItems: 'center',
+    marginRight: '5px',
+    marginLeft: '5px',
+    paddingRight: '5px',
+    paddingLeft: '5px',
+    overflowWrap: 'break-word',
+    wordBreak: 'break-word',
+  });
 
+  const MessageMeta = styled('div')({
+    fontSize: '12px',
+    marginTop: '-5px',
+    display:'flex',
+    justifyContent: 'flex-start',
+  });
+
+  const MessageName = styled('div')({
+    marginLeft: '10px',
+  });
+
+  
   return (
     <Body>
-      {/* <div className='chat-window'> */}
-      <Container sx={{bgcolor:'white', height: '50px', display:'flex', alignItems:'center', justifyContent:'center'}}>
-        {/* <div className='chat-header'> */}
-        <RoomName>
-          <p>{roomName} </p>
-        </RoomName>
-        {/* </div> */}
-      </Container>
-      <Divider color='#1976d2' />
-      <Container maxWidth='lg' sx={{bgcolor: 'white', height: '72vh'}}>
-        <div className='chat-body'>
-          <ScrollToButtom className='message-container'>
-            {messageList.map((messageContent, index) => {
-              console.log('mesageContent', messageContent);
-              return (
-                <div key={index} className='message' id={userName === messageContent.userName ? 'you' : 'other'}>
-                  <div>
-                    <div className='message-content'>
-                      <p>{messageContent.message}</p>
-                    </div>
-                    <div className='message-meta'>
-                      <p id='createdAt'>{messageContent.createdAt}</p>
-                      <p id='userName'>{messageContent.userName}</p>
+      <Container maxWidth='lg' sx={{bgcolor:'white', borderLeft: 3, borderRight: 3, borderColor:'#1976d2' }}>
+        <Container sx={{height: '50px', display:'flex', alignItems:'center', justifyContent:'center'}}>
+          <RoomName>
+            <p>{roomName} </p>
+          </RoomName>
+        </Container>
+        <Container sx={{marginBottom:'5px'}}>
+          <Divider color='#1976d2' sx={{borderBottomWidth: 3 }} />
+        </Container> 
+        <Container sx={{height: '70vh'}}>
+          <div className='chat-body'>
+            <ScrollToButtom className='message-container'>
+              {messageList.map((messageContent, index) => {
+                console.log('mesageContent', messageContent);
+                return (
+                  <div key={index} sx={userName === messageContent.userName ? {justifyContent:'flex-start'} : {justifyContent:'flex-end'}}>
+                    <div>
+                      <ChatMessage>
+                        <p>{messageContent.message}</p>
+                      </ChatMessage>
+                      <MessageMeta>
+                        <p id='createdAt'>{messageContent.createdAt}</p>
+                        <MessageName>
+                          <p id='userName'>{messageContent.userName}</p>
+                        </MessageName>
+                      </MessageMeta>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </ScrollToButtom>
-        </div>
+                );
+              })}
+            </ScrollToButtom>
+          </div>
+        </Container>
+        <Container>
+          <Divider color='#1976d2' sx={{borderBottomWidth: 3 }} />
+        </Container> 
+        <Container sx={{ bgcolor: 'white', display:'flex',justifyContent:'center', paddingBottom:'9px' }}>
+          <div className='chat-footer'>
+            <Input
+              type='text'
+              value={currentMessage}
+              placeholder='hey..'
+              onChange={(e) => {
+                setcurrentMessage(e.target.value);
+              }}
+              sx={{width: '55vw', height:'9vh', fontSize:'25px'}}
+            /> 
+            {/* TODO: EnterKeyでも送信できるようにする？*/}
+            <SendMessageButton onClick={sendMessage} />
+          </div>
+        </Container>
       </Container>
-      <Divider color='#1976d2' />
-      <Container maxWidth='lg' sx={{ bgcolor: 'white' }}>
-        <div className='chat-footer'>
-          <Input
-            type='text'
-            value={currentMessage}
-            placeholder='hey..'
-            onChange={(e) => {
-              setcurrentMessage(e.target.value);
-            }}
-            sx={{width: '80vh', height:'9vh', fontSize:'25px'}}
-          />
-          {/* TODO: EnterKeyでも送信できるようにする？*/}
-          <SendMessageButton onClick={sendMessage} />
-        </div>
-      </Container>
-      {/* </div> */}
     </Body>
   );
 };
@@ -132,4 +165,3 @@ NewChat.propTypes = {
   userName: PropTypes.string.isRequired,
   room: PropTypes.string.isRequired,
 };
-
