@@ -58,11 +58,6 @@ export const NewChat = () => {
   }, [socket]);
 
   //css in js
-
-  const Body = styled('div')({
-    backgroundColor: '#E3F1FC',
-  });
-
   const RoomName = styled('div')({
     fontSize: '20px',
     fontWeight: '800',
@@ -98,7 +93,7 @@ export const NewChat = () => {
   });
 
   return (
-    <Body>
+    <div style={{ 'background-color': '#E3F1FC' }}>
       <Container maxWidth='lg' sx={{ bgcolor: 'white', borderLeft: 3, borderRight: 3, borderColor: '#1976d2' }}>
         <Container sx={{ height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <RoomName>
@@ -158,7 +153,7 @@ export const NewChat = () => {
           </div>
         </Container>
       </Container>
-    </Body>
+    </div>
   );
 };
 
