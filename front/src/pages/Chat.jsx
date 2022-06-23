@@ -2,7 +2,6 @@
 import { Divider, Input } from '@mui/material';
 import Container from '@mui/material/Container';
 import { styled } from '@mui/system';
-import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import ScrollToButtom from 'react-scroll-to-bottom';
@@ -163,8 +162,8 @@ export const NewChat = () => {
   );
 };
 
-NewChat.propTypes = {
-  socket: PropTypes.string.isRequired,
-  userName: PropTypes.string.isRequired,
-  room: PropTypes.string.isRequired,
-};
+// NewChat.propTypes = {
+//   socket: PropTypes.string.isRequired,
+//   userName: PropTypes.string.isRequired,
+//   room: PropTypes.string.isRequired,
+// };
