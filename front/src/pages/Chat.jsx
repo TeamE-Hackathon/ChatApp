@@ -9,11 +9,8 @@ import ScrollToButtom from 'react-scroll-to-bottom';
 import io from 'socket.io-client';
 import { SendMessageButton } from '../components/button/SendMessageButton';
 
-
-const socket = io.connect('http://localhost:3001');
+const socket = io.connect(`${process.env.REACT_APP_BASEURL}:3001`); // eslint-disable-line
 export const NewChat = () => {
-  // const socket = io.connect(`${process.env.REACT_APP_BASEURL}:3001`); // eslint-disable-line
-
   // get pass props
   const location = useLocation();
   const { roomName } = location.state;
@@ -40,11 +37,11 @@ export const NewChat = () => {
 
   const sendMessage = async () => {
     if (currentMessage !== '') {
-      const messageData = { 
-        'roomName': roomName,
-        'userName': userName,
-        'message': currentMessage,
-        'createdAt': new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes(),
+      const messageData = {
+        roomName: roomName,
+        userName: userName,
+        message: currentMessage,
+        createdAt: new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes(),
       };
 
       await socket.emit('send_message', messageData);
@@ -64,7 +61,7 @@ export const NewChat = () => {
   //css in js
 
   const Body = styled('div')({
-    backgroundColor: '#E3F1FC'
+    backgroundColor: '#E3F1FC',
   });
 
   const RoomName = styled('div')({
@@ -93,7 +90,7 @@ export const NewChat = () => {
   const MessageMeta = styled('div')({
     fontSize: '12px',
     marginTop: '-5px',
-    display:'flex',
+    display: 'flex',
     justifyContent: 'flex-start',
   });
 
@@ -101,25 +98,31 @@ export const NewChat = () => {
     marginLeft: '10px',
   });
 
-  
   return (
     <Body>
-      <Container maxWidth='lg' sx={{bgcolor:'white', borderLeft: 3, borderRight: 3, borderColor:'#1976d2' }}>
-        <Container sx={{height: '50px', display:'flex', alignItems:'center', justifyContent:'center'}}>
+      <Container maxWidth='lg' sx={{ bgcolor: 'white', borderLeft: 3, borderRight: 3, borderColor: '#1976d2' }}>
+        <Container sx={{ height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <RoomName>
             <p>{roomName} </p>
           </RoomName>
         </Container>
-        <Container sx={{marginBottom:'5px'}}>
-          <Divider color='#1976d2' sx={{borderBottomWidth: 3 }} />
-        </Container> 
-        <Container sx={{height: '70vh'}}>
+        <Container sx={{ marginBottom: '5px' }}>
+          <Divider color='#1976d2' sx={{ borderBottomWidth: 3 }} />
+        </Container>
+        <Container sx={{ height: '70vh' }}>
           <div className='chat-body'>
             <ScrollToButtom className='message-container'>
               {messageList.map((messageContent, index) => {
                 console.log('mesageContent', messageContent);
                 return (
-                  <div key={index} sx={userName === messageContent.userName ? {justifyContent:'flex-start'} : {justifyContent:'flex-end'}}>
+                  <div
+                    key={index}
+                    sx={
+                      userName === messageContent.userName
+                        ? { justifyContent: 'flex-start' }
+                        : { justifyContent: 'flex-end' }
+                    }
+                  >
                     <div>
                       <ChatMessage>
                         <p>{messageContent.message}</p>
@@ -138,9 +141,9 @@ export const NewChat = () => {
           </div>
         </Container>
         <Container>
-          <Divider color='#1976d2' sx={{borderBottomWidth: 3 }} />
-        </Container> 
-        <Container sx={{ bgcolor: 'white', display:'flex',justifyContent:'center', paddingBottom:'9px' }}>
+          <Divider color='#1976d2' sx={{ borderBottomWidth: 3 }} />
+        </Container>
+        <Container sx={{ bgcolor: 'white', display: 'flex', justifyContent: 'center', paddingBottom: '9px' }}>
           <div className='chat-footer'>
             <Input
               type='text'
@@ -149,8 +152,8 @@ export const NewChat = () => {
               onChange={(e) => {
                 setcurrentMessage(e.target.value);
               }}
-              sx={{width: '55vw', height:'9vh', fontSize:'25px'}}
-            /> 
+              sx={{ width: '55vw', height: '9vh', fontSize: '25px' }}
+            />
             {/* TODO: EnterKeyでも送信できるようにする？*/}
             <SendMessageButton onClick={sendMessage} />
           </div>
