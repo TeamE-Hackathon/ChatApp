@@ -1,4 +1,3 @@
-// import './Chat1.css';
 import { Divider, Input } from '@mui/material';
 import Container from '@mui/material/Container';
 import { styled } from '@mui/system';
@@ -97,6 +96,7 @@ export const NewChat = () => {
     marginLeft: '10px',
   });
 
+
   return (
     <div style={{ 'background-color': '#E3F1FC' }}>
       <Container maxWidth='lg' sx={{ bgcolor: 'white', borderLeft: 3, borderRight: 3, borderColor: '#1976d2' }}>
@@ -108,37 +108,36 @@ export const NewChat = () => {
         <Container sx={{ marginBottom: '5px' }}>
           <Divider color='#1976d2' sx={{ borderBottomWidth: 3 }} />
         </Container>
-        <Container sx={{ height: '72vh', overflow: 'scroll' }}>
-          <div className='chat-body'>
-            <ScrollToButtom className='message-container'>
-              {messageList.map((messageContent, index) => {
-                console.log('mesageContent', messageContent);
-                return (
-                  <div
-                    key={index}
-                    id={userName === messageContent.userName ? 'you' : 'other'}
-                    sx={
-                      userName === messageContent.userName
-                        ? { justifyContent: 'flex-start' }
-                        : { justifyContent: 'flex-end' }
-                    }
-                  >
-                    <div>
-                      <ChatMessage>
-                        <p>{messageContent.message}</p>
-                      </ChatMessage>
-                      <MessageMeta>
-                        <p id='createdAt'>{messageContent.createdAt}</p>
-                        <MessageName>
-                          <p id='userName'>{messageContent.userName}</p>
-                        </MessageName>
-                      </MessageMeta>
-                    </div>
+        <Container
+          sx={{height: '72vh', overflow: 'scroll'}}>
+          <ScrollToButtom className='message-container'>
+            {messageList.map((messageContent, index) => {
+              console.log('mesageContent', messageContent);
+              return (
+                <div
+                  key={index}
+                  id={userName === messageContent.userName ? 'you' : 'other'}
+                  style={
+                    userName === messageContent.userName
+                      ? { display: 'flex', justifyContent: 'flex-end' }
+                      : { display: 'flex', justifyContent: 'flex-start' }
+                  }
+                >
+                  <div>
+                    <ChatMessage>
+                      <p>{messageContent.message}</p>
+                    </ChatMessage>
+                    <MessageMeta>
+                      <p id='createdAt'>{messageContent.createdAt}</p>
+                      <MessageName>
+                        <p id='userName'>{messageContent.userName}</p>
+                      </MessageName>
+                    </MessageMeta>
                   </div>
-                );
-              })}
-            </ScrollToButtom>
-          </div>
+                </div>
+              );
+            })}
+          </ScrollToButtom>
         </Container>
         <Container>
           <Divider color='#1976d2' sx={{ borderBottomWidth: 3 }} />
