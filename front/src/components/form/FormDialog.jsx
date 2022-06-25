@@ -58,8 +58,12 @@ export default function FormDialog() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Subscribe</Button>
+          <Button onClick={handleClose} variant='outlined'>
+            キャンセル
+          </Button>
+          <Button onClick={handleClose} variant='contained'>
+            保存
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

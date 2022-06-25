@@ -1,18 +1,9 @@
 import Grid from '@mui/material/Grid';
-import { useEffect, useState } from 'react';
-
-// import Box from '@mui/material/Box';
-// import Card from '@mui/material/Card';
-// import CardActions from '@mui/material/CardActions';
-// import CardContent from '@mui/material/CardContent';
-
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../firebase';
-
+import { useEffect, useState } from 'react';
 import ImageAvatars from '../components/avatar/MuiAvatar';
-
-// import ActionAreaCard from '../components/card/Card';
 import FormDialog from '../components/form/FormDialog';
+import { auth } from '../firebase';
 
 export const MyPage = () => {
   const [user, setUser] = useState('');
