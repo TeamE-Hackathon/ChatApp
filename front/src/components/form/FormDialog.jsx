@@ -20,23 +20,15 @@ export default function FormDialog() {
 
   return (
     <div>
-      <Button variant='outlined' onClick={handleClickOpen} sx={{ marginTop: 5 }}>
+      <Button variant='contained' onClick={handleClickOpen} sx={{ marginTop: 5 }}>
         プロフィールを編集する
       </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>プロフィール編集</DialogTitle>
         <DialogContent>
           <DialogContentText></DialogContentText>
-          <TextField autoFocus margin='dense' id='name' label='Name' type='name' fullWidth variant='standard' />
-          <TextField
-            autoFocus
-            margin='dense'
-            id='email'
-            label='Email Address'
-            type='email'
-            fullWidth
-            variant='standard'
-          />
+          <TextField autoFocus margin='dense' id='name' label='名前' type='name' fullWidth variant='standard' />
+          <TextField autoFocus margin='dense' id='email' label='Email' type='email' fullWidth variant='standard' />
           <TextField
             autoFocus
             margin='dense'
@@ -52,6 +44,15 @@ export default function FormDialog() {
             id='twitterid'
             label='TwitterID'
             type='id'
+            fullWidth
+            variant='standard'
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='skill'
+            label='技術スタック'
+            type='text'
             fullWidth
             variant='standard'
           />
