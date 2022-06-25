@@ -25,9 +25,12 @@ const params = {
   ],
   GlobalSecondaryIndexes: [
     {
-      IndexName: 'chats_global_index',
+      IndexName: 'chatsGSI',
       Projection: {
-        ProjectionType: 'KEYS_ONLY',
+        ProjectionType: 'INCLUDE',
+        NonKeyAttributes: [
+          "Message"
+        ]
       },
       KeySchema: [
         { AttributeName: 'RoomName', KeyType: 'HASH' },
