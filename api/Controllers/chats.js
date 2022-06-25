@@ -10,15 +10,12 @@ module.exports = {
     const getChatsParams = {
       TableName: TABLENAME,
       IndexName: 'chatsGSI',
-      // TODO: CLIと一緒
       KeyConditionExpression: 'RoomName = :name',
       ExpressionAttributeValues: {
         ':name': `${req.params.roomName}`,
       },
-      // ProjectionExpression: 'Messeage, CreatedAt, UserName, RoomName',
     };
     try {
-      // TODO: ScanCommandではなくクエリーコマンドを調べる
       const data = await ddbDocClient.send(new QueryCommand(getChatsParams));
       console.log('--------------------------------', data);
       res.json(data.Items);

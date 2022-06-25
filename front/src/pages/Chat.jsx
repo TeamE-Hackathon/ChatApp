@@ -1,6 +1,7 @@
 import { Divider, Input } from '@mui/material';
 import Container from '@mui/material/Container';
 import { styled } from '@mui/system';
+import axios from 'axios';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -28,9 +29,22 @@ export const NewChat = () => {
       socket.emit('join_room', roomName);
     }
   };
+  const loadChats = (roomName) => {
+    console.log(roomName);
+    // eslint-disable-next-line no-undef
+    axios.get(`${process.env.REACT_APP_BASEURL}:3001/chats/${roomName}`).then((res) => {
+      // keyを変更
+      const newData = res.data.map((data) => {
+        const { RoomName: roomName, CreatedAt: createdAt, Message: message, UserName: userName } = data;
+        return { roomName: roomName, createdAt: createdAt, message: message, userName: userName };
+      });
+      setMessageList(newData);
+    });
+  };
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => setUser(currentUser));
     joinRoom();
+    loadChats(roomName);
   }, []);
 
   const userName = user.displayName;
@@ -96,7 +110,6 @@ export const NewChat = () => {
     marginLeft: '10px',
   });
 
-
   return (
     <div style={{ 'background-color': '#E3F1FC' }}>
       <Container maxWidth='lg' sx={{ bgcolor: 'white', borderLeft: 3, borderRight: 3, borderColor: '#1976d2' }}>
@@ -108,8 +121,7 @@ export const NewChat = () => {
         <Container sx={{ marginBottom: '5px' }}>
           <Divider color='#1976d2' sx={{ borderBottomWidth: 3 }} />
         </Container>
-        <Container
-          sx={{height: '72vh', overflow: 'scroll'}}>
+        <Container sx={{ height: '72vh', overflow: 'scroll' }}>
           <ScrollToButtom className='message-container'>
             {messageList.map((messageContent, index) => {
               console.log('mesageContent', messageContent);
