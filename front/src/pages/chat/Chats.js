@@ -8,12 +8,11 @@ import './Chat.css';
 // const socket = io.connect(`${process.env.REACT_APP_BASEURL}:3001`); // eslint-disable-line
 const socket = io.connect('http://localhost:3001');
 export const Chat = () => {
-
   // get pass props
   const location = useLocation();
   const { roomName } = location.state;
 
-  // ToDo: dbからその部屋の名前でデータを取得する
+  // TODO: dbからその部屋の名前でデータを取得する
   // 部屋が作られていない場合は、アラート出してTOPページに遷移
 
   // ToDo: ログインユーザーを取得
@@ -37,10 +36,10 @@ export const Chat = () => {
   const sendMessage = async () => {
     if (currentMessage !== '') {
       const messageData = {
-        'roomName': roomName,
-        'userName': userName,
-        'message': currentMessage,
-        'createdAt': new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes(),
+        roomName: roomName,
+        userName: userName,
+        message: currentMessage,
+        createdAt: new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes(),
       };
 
       await socket.emit('send_message', messageData);
