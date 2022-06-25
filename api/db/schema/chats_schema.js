@@ -28,9 +28,7 @@ const params = {
       IndexName: 'chatsGSI',
       Projection: {
         ProjectionType: 'INCLUDE',
-        NonKeyAttributes: [
-          "Message"
-        ]
+        NonKeyAttributes: ['Message'],
       },
       KeySchema: [
         { AttributeName: 'RoomName', KeyType: 'HASH' },
