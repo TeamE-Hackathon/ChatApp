@@ -15,7 +15,7 @@ const app = express();
 
 const allowedOrigins = 'http://localhost:3000';
 const options = {
-  origin: allowedOrigins
+  origin: allowedOrigins,
 };
 
 // Then pass these options to cors:
@@ -31,19 +31,20 @@ const io = new Server(server, {
   },
 });
 
-app.use(express.json()) // for parsing application/json
-app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+app.use(express.json()); // for parsing application/json
+app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 const roomRouter = require('./routes/room');
-app.use('/rooms', roomRouter)
+app.use('/rooms', roomRouter);
 
-// TODO: 36,37と似た感じで/chat
-// GET /chat?roomName=XXX, or bodyでパラメータ送る
-// routes/chat.js作成
+const chatsRouter = require('./routes/chats');
+app.use('/chats', chatsRouter);
 
 // for TPC servers
 server.listen(3001, () => {
   console.log('Started api server on 3001');
 });
+
+// const { postNewChat } = require('./Controllers/chats');
 
 io.on('connection', (socket) => {
   console.log('User connected', socket.id);
@@ -73,6 +74,8 @@ io.on('connection', (socket) => {
     } catch (err) {
       console.log('Error', err);
     }
+    // const { error } = postNewChat(data);
+    // error || socket.to(data.roomName).emit('receive_message', data);
   });
   socket.on('disconnect', () => {
     console.log('User Disconnected', socket.id);
