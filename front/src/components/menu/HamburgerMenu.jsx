@@ -82,7 +82,7 @@ export default function HamburgerMenu() {
             sx={{ cursor: 'pointer', display: { xs: 'flex', sm: 'none' } }}
             onClick={toggleDrawer(anchor, true)}
           />
-          <Drawer anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
+          <Drawer anchor='right' open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
             {list(anchor)}
           </Drawer>
         </React.Fragment>

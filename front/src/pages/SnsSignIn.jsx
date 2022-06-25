@@ -88,7 +88,7 @@ export const SnsSignIn = () => {
                     />
                   </Button>
                   <Button type='submit' variant='text' sx={{ mt: 0.1, mb: 2 }} onClick={twitterSignIn}>
-                    <img src='sign-in-with-twitter-gray.png' alt='Sign in with Twitter' style={signInButton} />
+                    <img src='signin_with_twitter.png' alt='Sign in with Twitter' style={signInButton} />
                   </Button>
                   <Grid container justifyContent='flex-end' sx={{ mt: 3, mb: 1 }}>
                     <Grid item>
