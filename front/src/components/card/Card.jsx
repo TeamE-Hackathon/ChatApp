@@ -18,6 +18,7 @@ const getRandomPicture = () => {
 export default function ActionAreaCard(props) {
   const { RoomName: roomName, CreatedAt: createdAt, Detail: detail } = props; // eslint-disable-line no-unused-vars
   const picturePath = getRandomPicture();
+  // TODO: publicに画像保存してランダムに表示
   const imageUrl = `https://picsum.photos/id/${picturePath}`;
   return (
     <Card sx={{ maxWidth: 345 }}>
