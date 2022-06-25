@@ -7,6 +7,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import * as React from 'react';
 
+// TODO: propsとして受け取る
+// textFieldにplaceholderとしてセットする
 export default function FormDialog() {
   const [open, setOpen] = React.useState(false);
 

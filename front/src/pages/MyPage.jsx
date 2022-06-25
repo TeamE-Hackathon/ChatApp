@@ -27,6 +27,7 @@ export const MyPage = () => {
         <ImageAvatars displayName={displayName} />
       </Grid>
       <Grid item xs={12}>
+        {/* // TODO ここuserを渡す */}
         <FormDialog />
       </Grid>
     </Grid>
