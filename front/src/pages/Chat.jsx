@@ -72,7 +72,7 @@ export const NewChat = () => {
     height: 'auto',
     minHeight: '40px',
     maxWidth: '200px',
-    backgroundColor: '#1976d2',
+    backgroundColor: '#E3F1FC',
     borderRadius: '5px',
     color: 'white',
     display: 'flex',
@@ -116,7 +116,6 @@ export const NewChat = () => {
               return (
                 <div
                   key={index}
-                  id={userName === messageContent.userName ? 'you' : 'other'}
                   style={
                     userName === messageContent.userName
                       ? { display: 'flex', justifyContent: 'flex-end' }
@@ -124,7 +123,12 @@ export const NewChat = () => {
                   }
                 >
                   <div>
-                    <ChatMessage>
+                    <ChatMessage
+                      sx={
+                        userName === messageContent.userName
+                          ? { color: 'white', backgroundColor: '#1976d2' }
+                          : { color: '#1976d2', backgroundColor: '#E3F1FC' }
+                      }>
                       <p>{messageContent.message}</p>
                     </ChatMessage>
                     <MessageMeta>
