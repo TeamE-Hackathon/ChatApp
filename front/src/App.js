@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Header from './components/header/Header';
-// import { Chat } from './pages/chat/Chats';
 import { NewChat } from './pages/Chat';
+import { MyPage } from './pages/MyPage';
 import { SignIn } from './pages/SignIn';
 import { SignUp } from './pages/SignUp';
 import { SnsSignIn } from './pages/SnsSignIn';
@@ -17,10 +17,9 @@ function App() {
         <Route path='/' element={<RoomsList />} />
         <Route path='/signin' element={<SignIn />} />
         <Route path='/signup' element={<SignUp />} />
-        {/* <Route path='/rooms/:roomName' element={<Chat />} /> */}
-        <Route path='/rooms/:roomName' element={<NewChat />} />
-        {/* ToDo: MUIで焼き直す */}
         <Route path='/sns-signin' element={<SnsSignIn />} />
+        <Route path='/mypages/:userName' element={<MyPage />} />
+        <Route path='/rooms/:roomName' element={<NewChat />} />
       </Routes>
     </BrowserRouter>
   );
