@@ -28,8 +28,14 @@ export const RoomsList = () => {
       <Grid container direction='column'>
         <Grid container>
           <Grid item sm={2} />
-          <Grid item xs={12} sm={8}>
-            <Grid container spacing={2}>
+          <Grid item xs={12} sm={8} >
+            <Grid container
+              spacing={2}
+              sx={{
+                display: { xs: 'flex', sm: 'flex' },
+                flexDirection: { xs: 'column', sm: 'initial' },
+                alignItems: { xs: 'center', sm: 'initial' }
+              }} >
               {rooms.map((contentObj) => getCardContent(contentObj))}
             </Grid>
           </Grid>
