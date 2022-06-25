@@ -16,11 +16,11 @@ export const NewChat = () => {
   const location = useLocation();
   const { roomName } = location.state;
 
-  // ToDo: dbからその部屋の名前でデータを取得する
-  // 部屋が作られていない場合は、アラート出してTOPページに遷移
+  // ToDo: 部屋が作られていない場合は、アラート出してTOPページに遷移
 
-  // ToDo: ログインユーザーを取得
   const [user, setUser] = useState('');
+  const [currentMessage, setcurrentMessage] = useState('');
+  const [messageList, setMessageList] = useState([]);
 
   // emit join event
   const joinRoom = () => {
@@ -30,7 +30,6 @@ export const NewChat = () => {
     }
   };
   const loadChats = (roomName) => {
-    console.log(roomName);
     // eslint-disable-next-line no-undef
     axios.get(`${process.env.REACT_APP_BASEURL}:3001/chats/${roomName}`).then((res) => {
       // keyを変更
@@ -48,9 +47,6 @@ export const NewChat = () => {
   }, []);
 
   const userName = user.displayName;
-
-  const [currentMessage, setcurrentMessage] = useState('');
-  const [messageList, setMessageList] = useState([]);
 
   const sendMessage = async () => {
     if (currentMessage !== '') {
@@ -177,9 +173,3 @@ export const NewChat = () => {
     </div>
   );
 };
-
-// NewChat.propTypes = {
-//   socket: PropTypes.string.isRequired,
-//   userName: PropTypes.string.isRequired,
-//   room: PropTypes.string.isRequired,
-// };
