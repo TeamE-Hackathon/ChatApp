@@ -4,7 +4,7 @@ import { styled } from '@mui/system';
 import axios from 'axios';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import ScrollToButtom from 'react-scroll-to-bottom';
 import io from 'socket.io-client';
 import { SendMessageButton } from '../components/button/SendMessageButton';
@@ -16,9 +16,10 @@ export const NewChat = () => {
   const location = useLocation();
   const { roomName } = location.state;
 
-  // ToDo: 部屋が作られていない場合は、アラート出してTOPページに遷移
+  // TODO: 部屋が作られていない場合は、アラート出してTOPページに遷移
 
   const [user, setUser] = useState('');
+  const [loaded, setLoaded] = useState(false);
   const [currentMessage, setcurrentMessage] = useState('');
   const [messageList, setMessageList] = useState([]);
 
@@ -41,12 +42,15 @@ export const NewChat = () => {
     });
   };
   useEffect(() => {
-    onAuthStateChanged(auth, (currentUser) => setUser(currentUser));
+    onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoaded(true);
+    });
     joinRoom();
     loadChats(roomName);
   }, []);
 
-  const userName = user.displayName;
+  const userName = user ? user.displayName : null;
 
   const sendMessage = async () => {
     if (currentMessage !== '') {
@@ -107,69 +111,83 @@ export const NewChat = () => {
   });
 
   return (
-    <div style={{ 'background-color': '#E3F1FC' }}>
-      <Container maxWidth='lg' sx={{ bgcolor: 'white', borderLeft: 3, borderRight: 3, borderColor: '#1976d2' }}>
-        <Container sx={{ height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <RoomName>
-            <p>{roomName} </p>
-          </RoomName>
-        </Container>
-        <Container sx={{ marginBottom: '5px' }}>
-          <Divider color='#1976d2' sx={{ borderBottomWidth: 3 }} />
-        </Container>
-        <Container sx={{ height: '72vh', overflow: 'scroll' }}>
-          <ScrollToButtom className='message-container'>
-            {messageList.map((messageContent, index) => {
-              console.log('mesageContent', messageContent);
-              return (
-                <div
-                  key={index}
-                  style={
-                    userName === messageContent.userName
-                      ? { display: 'flex', justifyContent: 'flex-end' }
-                      : { display: 'flex', justifyContent: 'flex-start' }
-                  }
-                >
-                  <div>
-                    <ChatMessage
-                      sx={
-                        userName === messageContent.userName
-                          ? { color: 'white', backgroundColor: '#1976d2' }
-                          : { color: '#1976d2', backgroundColor: '#E3F1FC' }
-                      }>
-                      <p>{messageContent.message}</p>
-                    </ChatMessage>
-                    <MessageMeta>
-                      <p id='createdAt'>{messageContent.createdAt}</p>
-                      <MessageName>
-                        <p id='userName'>{messageContent.userName}</p>
-                      </MessageName>
-                    </MessageMeta>
+    <>
+      {loaded && (
+        <>
+          {!user ? (
+            alert('サインインしてからチャットを見られるようになります。') || <Navigate to={'/sns-signin'} />
+          ) : (
+            <div style={{ 'background-color': '#E3F1FC' }}>
+              <Container
+                maxWidth='lg'
+                sx={{ bgcolor: 'white', borderLeft: 3, borderRight: 3, borderColor: '#1976d2' }}
+              >
+                <Container sx={{ height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <RoomName>
+                    <p>{roomName} </p>
+                  </RoomName>
+                </Container>
+                <Container sx={{ marginBottom: '5px' }}>
+                  <Divider color='#1976d2' sx={{ borderBottomWidth: 3 }} />
+                </Container>
+                <Container sx={{ height: '72vh', overflow: 'scroll' }}>
+                  <ScrollToButtom className='message-container'>
+                    {messageList.map((messageContent, index) => {
+                      console.log('mesageContent', messageContent);
+                      return (
+                        <div
+                          key={index}
+                          style={
+                            userName === messageContent.userName
+                              ? { display: 'flex', justifyContent: 'flex-end' }
+                              : { display: 'flex', justifyContent: 'flex-start' }
+                          }
+                        >
+                          <div>
+                            <ChatMessage
+                              sx={
+                                userName === messageContent.userName
+                                  ? { color: 'white', backgroundColor: '#1976d2' }
+                                  : { color: '#1976d2', backgroundColor: '#E3F1FC' }
+                              }
+                            >
+                              <p>{messageContent.message}</p>
+                            </ChatMessage>
+                            <MessageMeta>
+                              <p id='createdAt'>{messageContent.createdAt}</p>
+                              <MessageName>
+                                <p id='userName'>{messageContent.userName}</p>
+                              </MessageName>
+                            </MessageMeta>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </ScrollToButtom>
+                </Container>
+                <Container>
+                  <Divider color='#1976d2' sx={{ borderBottomWidth: 3 }} />
+                </Container>
+                <Container sx={{ bgcolor: 'white', display: 'flex', justifyContent: 'center', paddingBottom: '9px' }}>
+                  <div className='chat-footer'>
+                    <Input
+                      type='text'
+                      value={currentMessage}
+                      placeholder='hey..'
+                      onChange={(e) => {
+                        setcurrentMessage(e.target.value);
+                      }}
+                      sx={{ width: '55vw', height: '9vh', fontSize: '25px' }}
+                    />
+                    {/* TODO: EnterKeyでも送信できるようにする？*/}
+                    <SendMessageButton onClick={sendMessage} />
                   </div>
-                </div>
-              );
-            })}
-          </ScrollToButtom>
-        </Container>
-        <Container>
-          <Divider color='#1976d2' sx={{ borderBottomWidth: 3 }} />
-        </Container>
-        <Container sx={{ bgcolor: 'white', display: 'flex', justifyContent: 'center', paddingBottom: '9px' }}>
-          <div className='chat-footer'>
-            <Input
-              type='text'
-              value={currentMessage}
-              placeholder='hey..'
-              onChange={(e) => {
-                setcurrentMessage(e.target.value);
-              }}
-              sx={{ width: '55vw', height: '9vh', fontSize: '25px' }}
-            />
-            {/* TODO: EnterKeyでも送信できるようにする？*/}
-            <SendMessageButton onClick={sendMessage} />
-          </div>
-        </Container>
-      </Container>
-    </div>
+                </Container>
+              </Container>
+            </div>
+          )}
+        </>
+      )}
+    </>
   );
 };
