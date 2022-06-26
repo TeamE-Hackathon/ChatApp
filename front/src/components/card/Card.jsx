@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 const getRandomPicture = () => {
   let photos = [];
   for (let i = 1; i <= 7; i++) {
-    photos.push(`image${i}.jpeg`);
+    photos.push(`img/image${i}.jpeg`);
   }
   const min = Math.ceil(0);
   const max = Math.floor(photos.length);
