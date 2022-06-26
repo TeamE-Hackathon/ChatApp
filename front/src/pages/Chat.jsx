@@ -115,9 +115,6 @@ export const NewChat = () => {
       {loaded && (
         <>
           {!user ? (
-            // alert('サインインしてからチャットを見られるようになります。') ? null : (
-            //   <Navigate to={'/sns-signin'} />
-            // )
             alert('サインインしてからチャットを見られるようになります。') || <Navigate to={'/sns-signin'} />
           ) : (
             <div style={{ 'background-color': '#E3F1FC' }}>
