@@ -7,8 +7,10 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 const getRandomPicture = () => {
-  // TODO: 一旦、https://picsum.photos/images からいい感じの写真を取ってくる。
-  const photos = ['667/4240/2832', '/251/5184/3456', '/362/4438/2954', '/478/5184/3456'];
+  let photos = [];
+  for (let i = 1; i <= 7; i++) {
+    photos.push(`img/image${i}.jpeg`);
+  }
   const min = Math.ceil(0);
   const max = Math.floor(photos.length);
   const randomIndex = Math.floor(Math.random() * (max - min) + min);
@@ -17,8 +19,7 @@ const getRandomPicture = () => {
 
 export default function ActionAreaCard(props) {
   const { RoomName: roomName, CreatedAt: createdAt, Detail: detail } = props; // eslint-disable-line no-unused-vars
-  const picturePath = getRandomPicture();
-  const imageUrl = `https://picsum.photos/id/${picturePath}`;
+  const imageUrl = getRandomPicture();
   return (
     <Card sx={{ maxWidth: 345 }}>
       <Link to={`/rooms/${roomName}`} state={{ roomName: roomName }} style={{ textDecoration: 'none', color: 'gray' }}>
