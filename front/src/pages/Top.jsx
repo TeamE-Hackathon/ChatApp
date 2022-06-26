@@ -16,9 +16,9 @@ export const RoomsList = () => {
   const [rooms, setRooms] = useState([]);
   const url = '/newRoom';
   useEffect(() => {
-    axios.defaults.headers.get['Access-Control-Allow-Origin'] = `${process.env.REACT_APP_BASEURL}:3001`; // eslint-disable-line
+    axios.defaults.headers.get['Access-Control-Allow-Origin'] = `${process.env.API_ENDPOINT}:3001`; // eslint-disable-line
     // eslint-disable-next-line
-    axios.get(`${process.env.REACT_APP_BASEURL}:3001/rooms`).then((res) => {
+    axios.get(`${process.env.API_ENDPOINT}:3001/rooms`).then((res) => {
       setRooms(res.data);
     });
   }, []);
@@ -28,14 +28,16 @@ export const RoomsList = () => {
       <Grid container direction='column'>
         <Grid container>
           <Grid item sm={2} />
-          <Grid item xs={12} sm={8} >
-            <Grid container
+          <Grid item xs={12} sm={8}>
+            <Grid
+              container
               spacing={2}
               sx={{
                 display: { xs: 'flex', sm: 'flex' },
                 flexDirection: { xs: 'column', sm: 'initial' },
-                alignItems: { xs: 'center', sm: 'initial' }
-              }} >
+                alignItems: { xs: 'center', sm: 'initial' },
+              }}
+            >
               {rooms.map((contentObj) => getCardContent(contentObj))}
             </Grid>
           </Grid>
