@@ -13,7 +13,6 @@ import { useEffect, useState } from 'react';
 import { Link as RouterLink, Navigate, useNavigate } from 'react-router-dom';
 import { Copyright } from '../components/footer/Copyright';
 import { auth } from '../firebase';
-// import './firebase.js';
 
 const theme = createTheme();
 
@@ -29,13 +28,11 @@ export const SnsSignIn = () => {
   const [loaded, setLoaded] = useState(false);
 
   const navigate = useNavigate();
-  // const auth = getAuth();
-  const provider = new GoogleAuthProvider();
-
+  const googleProvider = new GoogleAuthProvider();
   const twitterProvider = new TwitterAuthProvider();
 
   const googleSignIn = () => {
-    signInWithPopup(auth, provider)
+    signInWithPopup(auth, googleProvider)
       .then((result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
