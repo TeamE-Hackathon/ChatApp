@@ -32,7 +32,7 @@ export const SnsSignIn = () => {
   // const auth = getAuth();
   const provider = new GoogleAuthProvider();
 
-  const twitterprovider = new TwitterAuthProvider();
+  const twitterProvider = new TwitterAuthProvider();
 
   const googleSignIn = () => {
     signInWithPopup(auth, provider)
@@ -50,7 +50,7 @@ export const SnsSignIn = () => {
       });
   };
   const twitterSignIn = () => {
-    signInWithPopup(auth, twitterprovider)
+    signInWithPopup(auth, twitterProvider)
       .then((result) => {
         // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
         // You can use these server side with your app's credentials to access the Twitter API.        
