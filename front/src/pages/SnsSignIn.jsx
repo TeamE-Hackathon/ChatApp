@@ -8,10 +8,12 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, TwitterAuthProvider } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink, Navigate, useNavigate } from 'react-router-dom';
 import { Copyright } from '../components/footer/Copyright';
+import { auth } from '../firebase';
+// import './firebase.js';
 
 const theme = createTheme();
 
@@ -27,8 +29,10 @@ export const SnsSignIn = () => {
   const [loaded, setLoaded] = useState(false);
 
   const navigate = useNavigate();
-  const auth = getAuth();
+  // const auth = getAuth();
   const provider = new GoogleAuthProvider();
+
+  const twitterprovider = new TwitterAuthProvider();
 
   const googleSignIn = () => {
     signInWithPopup(auth, provider)
@@ -46,7 +50,21 @@ export const SnsSignIn = () => {
       });
   };
   const twitterSignIn = () => {
-    alert('実装中');
+    signInWithPopup(auth, twitterprovider)
+      .then((result) => {
+        // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
+        // You can use these server side with your app's credentials to access the Twitter API.        
+        const credential = TwitterAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        
+        // The signed-in user info.
+        const user = result.user;
+        console.log({ token: token, user: user });
+        navigate('/');
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   useEffect(() => {
