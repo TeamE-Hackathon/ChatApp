@@ -5,24 +5,15 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
-import { getAuth, onAuthStateChanged, updateEmail, updateProfile } from 'firebase/auth';
+import { getAuth, updateEmail, updateProfile } from 'firebase/auth';
+import PropTypes from 'prop-types';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
 
-// TODO: propsとして受け取る
-// textFieldにplaceholderとしてセットする
-export default function FormDialog() {
+export default function FormDialog({ uid, displayName, email, photoURL, emailVerified }) {
+  console.log(uid, photoURL, emailVerified);
+
   const [open, setOpen] = React.useState(false);
-  const [setUser] = useState('');
   const auth = getAuth();
-  const user = auth.currentUser;
-
-  /* ↓ログインしているかどうかを判定する */
-  useEffect(() => {
-    onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-  }, []);
 
   // プロフィールを更新する
   updateProfile(auth.currentUser, {
@@ -49,18 +40,6 @@ export default function FormDialog() {
       // ...
     });
 
-  if (user !== null) {
-    const displayName = user.displayName;
-    const email = user.email;
-    const photoURL = user.photoURL;
-    const emailVerified = user.emailVerified;
-
-    // The user's ID, unique to the Firebase project. Do NOT use
-    // this value to authenticate with your backend server, if
-    // you have one. Use User.getToken() instead.
-    const uid = user.uid;
-    console.log(displayName, email, photoURL, emailVerified, uid);
-  }
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -82,7 +61,7 @@ export default function FormDialog() {
             margin='dense'
             id='name'
             label='名前'
-            defaultValue={user.displayName}
+            defaultValue={displayName}
             type='name'
             fullWidth
             variant='standard'
@@ -91,7 +70,7 @@ export default function FormDialog() {
             margin='dense'
             id='email'
             label='Email'
-            defaultValue={user.email}
+            defaultValue={email}
             type='email'
             fullWidth
             variant='standard'
@@ -111,3 +90,11 @@ export default function FormDialog() {
     </div>
   );
 }
+
+FormDialog.propTypes = {
+  uid: PropTypes.string,
+  displayName: PropTypes.string,
+  email: PropTypes.string,
+  photoURL: PropTypes.string,
+  emailVerified: PropTypes.string,
+};
