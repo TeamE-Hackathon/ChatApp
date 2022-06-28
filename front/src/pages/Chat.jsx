@@ -36,11 +36,11 @@ export const NewChat = () => {
     // eslint-disable-next-line no-undef
     axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/chats/${roomName}`).then((res) => {
       // keyを変更
-      const newData = res.data.map((data) => {
+      const pastChats = res.data.map((data) => {
         const { RoomName: roomName, CreatedAt: createdAt, Message: message, UserName: userName } = data;
         return { roomName: roomName, createdAt: createdAt, message: message, userName: userName };
       });
-      setMessageList(newData);
+      setMessageList(pastChats);
     });
   };
   useEffect(() => {
