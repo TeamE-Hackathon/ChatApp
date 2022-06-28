@@ -17,7 +17,7 @@ const socket = io.connect(`${process.env.REACT_APP_API_ENDPOINT}:3001`); // esli
 export const NewChat = () => {
   // get pass props
   const location = useLocation();
-  const { roomName } = location.state ? location.state : { roomName: null };
+  let { roomName } = location.state ? location.state : { roomName: null };
   const navigate = useNavigate();
 
   const [user, setUser] = useState('');
@@ -32,16 +32,22 @@ export const NewChat = () => {
       socket.emit('join_room', roomName);
     }
   };
-  const loadChats = (roomName) => {
-    // eslint-disable-next-line no-undef
-    axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/chats/${roomName}`).then((res) => {
-      // keyを変更
-      const pastChats = res.data.map((data) => {
-        const { RoomName: roomName, CreatedAt: createdAt, Message: message, UserName: userName } = data;
-        return { roomName: roomName, createdAt: createdAt, message: message, userName: userName };
+  const loadChats = (room) => {
+    axios
+      // eslint-disable-next-line no-undef
+      .get(`${process.env.REACT_APP_API_ENDPOINT}:3001/chats/${room}`)
+      .then((res) => {
+        // keyを変更
+        const pastChats = res.data.map((data) => {
+          const { RoomName: roomName, CreatedAt: createdAt, Message: message, UserName: userName } = data;
+          return { roomName: roomName, createdAt: createdAt, message: message, userName: userName };
+        });
+        setMessageList(pastChats);
+        roomName = room;
+      })
+      .catch(() => {
+        roomName = null;
       });
-      setMessageList(pastChats);
-    });
   };
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
