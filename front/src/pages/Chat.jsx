@@ -17,7 +17,10 @@ const socket = io.connect(`${process.env.REACT_APP_API_ENDPOINT}:3001`); // esli
 export const NewChat = () => {
   // get pass props
   const location = useLocation();
-  let { roomName } = location.state ? location.state : { roomName: null };
+  // let { roomName } = location.state ? location.state : { roomName: location.pathname.replace('/rooms/', '') };
+  const [roomName, setRoomName] = useState(
+    location.state ? location.state.roomName : location.pathname.replace('/rooms/', '')
+  );
   const navigate = useNavigate();
 
   const [user, setUser] = useState('');
@@ -33,21 +36,18 @@ export const NewChat = () => {
     }
   };
   const loadChats = (room) => {
-    axios
-      // eslint-disable-next-line no-undef
-      .get(`${process.env.REACT_APP_API_ENDPOINT}:3001/chats/${room}`)
-      .then((res) => {
-        // keyを変更
-        const pastChats = res.data.map((data) => {
-          const { RoomName: roomName, CreatedAt: createdAt, Message: message, UserName: userName } = data;
-          return { roomName: roomName, createdAt: createdAt, message: message, userName: userName };
-        });
-        setMessageList(pastChats);
-        roomName = room;
-      })
-      .catch(() => {
-        roomName = null;
+    // eslint-disable-next-line no-undef
+    axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/chats/${room}`).then((res) => {
+      // keyを変更
+      const pastChats = res.data.map((data) => {
+        const { RoomName: roomName, CreatedAt: createdAt, Message: message, UserName: userName } = data;
+        return { roomName: roomName, createdAt: createdAt, message: message, userName: userName };
       });
+      setMessageList(pastChats);
+      // roomName = pastChats.length > 0 ? room : null;
+      setRoomName(pastChats.length > 0 ? room : null);
+      console.log('roomName', roomName);
+    });
   };
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
