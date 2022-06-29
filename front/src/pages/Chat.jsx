@@ -1,20 +1,24 @@
 import { Divider, Input } from '@mui/material';
+import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import Stack from '@mui/material/Stack';
 import { styled } from '@mui/system';
 import axios from 'axios';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect, useState } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ScrollToButtom from 'react-scroll-to-bottom';
 import io from 'socket.io-client';
 import { SendMessageButton } from '../components/button/SendMessageButton';
 import { auth } from '../firebase';
 
-const socket = io.connect(`${process.env.API_ENDPOINT}:3001`); // eslint-disable-line
+const socket = io.connect(`${process.env.REACT_APP_API_ENDPOINT}:3001`); // eslint-disable-line
 export const NewChat = () => {
   // get pass props
   const location = useLocation();
   const { roomName } = location.state;
+  const navigate = useNavigate();
 
   // TODO: 部屋が作られていない場合は、アラート出してTOPページに遷移
 
@@ -32,7 +36,7 @@ export const NewChat = () => {
   };
   const loadChats = (roomName) => {
     // eslint-disable-next-line no-undef
-    axios.get(`${process.env.API_ENDPOINT}:3001/chats/${roomName}`).then((res) => {
+    axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/chats/${roomName}`).then((res) => {
       // keyを変更
       const newData = res.data.map((data) => {
         const { RoomName: roomName, CreatedAt: createdAt, Message: message, UserName: userName } = data;
@@ -115,7 +119,23 @@ export const NewChat = () => {
       {loaded && (
         <>
           {!user ? (
-            alert('サインインしてからチャットを見られるようになります。') || <Navigate to={'/sns-signin'} />
+            <Stack sx={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center' }} spacing={2}>
+              <Alert
+                sx={{
+                  width: { xs: '100%', sm: '70%', md: '500px' },
+                  display: 'flex',
+                  flexWrap: { xs: 'wrap', sm: 'nowrap' },
+                }}
+                severity='info'
+                action={
+                  <Button onClick={() => navigate('/sns-signin')} color='inherit' size='small'>
+                    OK
+                  </Button>
+                }
+              >
+                サインイン後にチャットを見られるようになります。
+              </Alert>
+            </Stack>
           ) : (
             <div style={{ 'background-color': '#E3F1FC' }}>
               <Container

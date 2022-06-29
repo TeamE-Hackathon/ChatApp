@@ -29,7 +29,7 @@ export function CreateRoomModal() {
   const handleSubscribe = () => {
     axios({
       method: 'post',
-      url: `${process.env.API_ENDPOINT}:3001/rooms/`, // eslint-disable-line
+      url: `${process.env.REACT_APP_API_ENDPOINT}:3001/rooms/`, // eslint-disable-line
       data: {
         roomName: roomNameValue,
         detail: detailValue,
