@@ -18,13 +18,6 @@ import { auth } from '../firebase';
 
 const theme = createTheme();
 
-// const signInButton = {
-//   width: '300px',
-//   maxWidth: '100%',
-//   height: 'auto',
-//   backgroundSize: 'cover',
-// };
-
 export const SnsSignIn = () => {
   const [user, setUser] = useState('');
   const [loaded, setLoaded] = useState(false);
