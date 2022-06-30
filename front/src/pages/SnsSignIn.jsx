@@ -11,17 +11,12 @@ import Typography from '@mui/material/Typography';
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, TwitterAuthProvider } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink, Navigate, useNavigate } from 'react-router-dom';
+import { GoogleSigninButton } from '../components/button/GoogleSigninButton';
+import { TwitterSigninButton } from '../components/button/TwitterSigninButton';
 import { Copyright } from '../components/footer/Copyright';
 import { auth } from '../firebase';
 
 const theme = createTheme();
-
-const signInButton = {
-  width: '300px',
-  maxWidth: '100%',
-  height: 'auto',
-  backgroundSize: 'cover',
-};
 
 export const SnsSignIn = () => {
   const [user, setUser] = useState('');
@@ -96,14 +91,10 @@ export const SnsSignIn = () => {
                     サインインして利用開始する
                   </Typography>
                   <Button type='submit' variant='text' sx={{ mt: 3, mb: 0.1 }} onClick={googleSignIn}>
-                    <img
-                      src='btn_google_signin_light_normal_web@2x.png'
-                      alt='Sign in with Google'
-                      style={signInButton}
-                    />
+                    <GoogleSigninButton />
                   </Button>
                   <Button type='submit' variant='text' sx={{ mt: 0.1, mb: 2 }} onClick={twitterSignIn}>
-                    <img src='signin_with_twitter.png' alt='Sign in with Twitter' style={signInButton} />
+                    <TwitterSigninButton />
                   </Button>
                   <Grid container justifyContent='flex-end' sx={{ mt: 3, mb: 1 }}>
                     <Grid item>
