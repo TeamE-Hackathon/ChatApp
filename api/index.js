@@ -11,10 +11,10 @@ const { ddbDocClient } = require('./initDB');
 const { nowTime } = require('./utils/dateTime');
 
 require('dotenv').config();
-const BASEURL = process.env.BASEURL;
+const FRONT_ENDPOINT = process.env.FRONT_ENDPOINT;
 const app = express();
 
-const allowedOrigins = `${BASEURL}:3000`;
+const allowedOrigins = `${FRONT_ENDPOINT}:3000`;
 const options = {
   origin: allowedOrigins,
 };
@@ -27,7 +27,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   // TODO: もしかしたらこのCORSの設定いらないかも
   cors: {
-    origin: `${BASEURL}:3000`,
+    origin: `${FRONT_ENDPOINT}:3000`,
     methods: ['GET', 'POST'],
   },
 });
