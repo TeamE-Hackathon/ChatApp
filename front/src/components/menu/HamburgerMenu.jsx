@@ -5,14 +5,15 @@ import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../../firebase';
 
 console.log(auth);
 
 export default function HamburgerMenu() {
+  const navigate = useNavigate();
   /* ↓state変数「user」を定義 */
   const [user, setUser] = useState('');
   
@@ -22,6 +23,17 @@ export default function HamburgerMenu() {
       setUser(currentUser);
     });
   }, []);
+
+  const userSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        console.log('Sign-out successful.');
+        navigate('/sns-signin');
+      })
+      .catch((error) => {
+        console.log({ error: error });
+      });
+  };
 
   const [state, setState] = React.useState({
     top: false,
@@ -47,16 +59,16 @@ export default function HamburgerMenu() {
     >
       <List component='nav'>
         {!user ? (
-          <Link to='/signin' style={{ textDecoration: 'none', color: '#1976d2' }}>
+          <Link to='/sns-signin' style={{ textDecoration: 'none', color: '#1976d2' }}>
             <ListItem>
               <ListItemText primary='SIGN IN' />
             </ListItem>
           </Link>
         ) : (
           <>
-            <Link to='/' style={{ textDecoration: 'none', color: '#1976d2' }}>
+            <Link to='/sns-signin' style={{ textDecoration: 'none', color: '#1976d2' }}>
               <ListItem>
-                <ListItemText primary='SIGN OUT' />
+                <ListItemText primary='SIGN OUT' onClick={userSignOut} />
               </ListItem>
             </Link>
             <Divider />
