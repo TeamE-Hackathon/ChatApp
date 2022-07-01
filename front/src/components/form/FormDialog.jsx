@@ -8,44 +8,51 @@ import TextField from '@mui/material/TextField';
 import { getAuth, updateEmail, updateProfile } from 'firebase/auth';
 import PropTypes from 'prop-types';
 import * as React from 'react';
+import { useState } from 'react';
 
 export default function FormDialog({ uid, displayName, email, photoURL, emailVerified }) {
   console.log(uid, photoURL, emailVerified);
 
+  const [NameValue, setNameValue] = useState('');
+  const [EmailValue, setEmailValue] = useState('');
+
   const [open, setOpen] = React.useState(false);
   const auth = getAuth();
 
-  // プロフィールを更新する
-  updateProfile(auth.currentUser, {
-    displayName: 'Jane Q. User',
-    photoURL: 'https://example.com/jane-q-user/profile.jpg',
-  })
-    .then(() => {
-      // Profile updated!
-      // ...
+  const handleClose = () => {
+    // プロフィールを更新する
+    updateProfile(auth.currentUser, {
+      displayName: NameValue,
+      photoURL: 'https://example.com/jane-q-user/profile.jpg',
     })
-    .catch(() => {
-      // An error occurred
-      // ...
-    });
+      .then((nameValue) => {
+        // Profile updated!
+        // ...
+        displayName = nameValue;
+      })
+      .catch((error) => {
+        // An error occurred
+        // ...
+        console.log(error);
+      });
 
-  // emailを更新する
-  updateEmail(auth.currentUser, 'user@example.com')
-    .then(() => {
-      // Email updated!
-      // ...
-    })
-    .catch(() => {
-      // An error occurred
-      // ...
-    });
+    // emailを更新する
+    updateEmail(auth.currentUser, EmailValue)
+      .then(() => {
+        // Email updated!
+        // ...
+      })
+      .catch((error) => {
+        // An error occurred
+        // ...
+        console.log(error);
+      });
+
+    setOpen(false);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
   };
 
   return (
@@ -65,6 +72,7 @@ export default function FormDialog({ uid, displayName, email, photoURL, emailVer
             type='name'
             fullWidth
             variant='standard'
+            onChange={(e) => setNameValue(e.target.value)}
           />
           <TextField
             margin='dense'
@@ -74,6 +82,7 @@ export default function FormDialog({ uid, displayName, email, photoURL, emailVer
             type='email'
             fullWidth
             variant='standard'
+            onChange={(e) => setEmailValue(e.target.value)}
           />
           <TextField margin='dense' id='twitterid' label='TwitterID' type='id' fullWidth variant='standard' />
           <TextField margin='dense' id='skill' label='技術スタック' type='text' fullWidth variant='standard' />
