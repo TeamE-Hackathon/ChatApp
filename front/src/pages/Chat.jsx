@@ -34,17 +34,17 @@ export const NewChat = () => {
       socket.emit('join_room', roomName);
     }
   };
-  const loadChats = (room) => {
-    // eslint-disable-next-line no-undef
-    axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/chats/${room}`).then((res) => {
-      // keyを変更
-      const pastChats = res.data.map((data) => {
-        const { RoomName: roomName, CreatedAt: createdAt, Message: message, UserName: userName } = data;
-        return { roomName: roomName, createdAt: createdAt, message: message, userName: userName };
-      });
-      setRoomName(pastChats.length > 0 ? room : null);
-      setMessageList(pastChats);
+  const loadRoom = async (room) => {
+    const { data: roomInfo } = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/rooms/${room}`); // eslint-disable-line
+    setRoomName(roomInfo.length > 0 ? room : null);
+  };
+  const loadChats = async (room) => {
+    const { data: pastChats } = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/chats/${room}`); // eslint-disable-line
+    const newChats = pastChats.map((data) => {
+      const { RoomName: roomName, CreatedAt: createdAt, Message: message, UserName: userName } = data;
+      return { roomName: roomName, createdAt: createdAt, message: message, userName: userName };
     });
+    setMessageList(newChats);
   };
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
@@ -52,6 +52,7 @@ export const NewChat = () => {
       setLoaded(true);
     });
     joinRoom();
+    loadRoom(roomName);
     loadChats(roomName);
   }, []);
 
@@ -63,7 +64,12 @@ export const NewChat = () => {
         roomName: roomName,
         userName: userName,
         message: currentMessage,
-        createdAt: new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes(),
+        createdAt:
+          new Date(Date.now()).getHours() +
+          ':' +
+          new Date(Date.now()).getMinutes() +
+          ':' +
+          new Date(Date.now()).getSeconds(),
       };
 
       await socket.emit('send_message', messageData);
@@ -200,7 +206,7 @@ export const NewChat = () => {
                                   <p>{messageContent.message}</p>
                                 </ChatMessage>
                                 <MessageMeta>
-                                  <p id='createdAt'>{messageContent.createdAt}</p>
+                                  <p id='createdAt'>{messageContent.createdAt.slice(0, 5)}</p>
                                   <MessageName>
                                     <p id='userName'>{messageContent.userName}</p>
                                   </MessageName>
