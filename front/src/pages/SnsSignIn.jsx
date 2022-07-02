@@ -8,9 +8,10 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import axios from 'axios';
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, TwitterAuthProvider } from 'firebase/auth';
 import { useEffect, useState } from 'react';
-import { Link as RouterLink, Navigate, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, Navigate } from 'react-router-dom';
 import { GoogleSigninButton } from '../components/button/GoogleSigninButton';
 import { TwitterSigninButton } from '../components/button/TwitterSigninButton';
 import { Copyright } from '../components/footer/Copyright';
@@ -22,9 +23,26 @@ export const SnsSignIn = () => {
   const [user, setUser] = useState('');
   const [loaded, setLoaded] = useState(false);
 
-  const navigate = useNavigate();
   const googleProvider = new GoogleAuthProvider();
   const twitterProvider = new TwitterAuthProvider();
+
+  const createDynamodbUser = async (uid, name, signInType) => {
+    const { data: userInfo } = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/users/${uid}`); // eslint-disable-line
+    // 初めてサインインする場合にDynamoDBにユーザ情報を保存
+    if (userInfo.length === 0) {
+      axios({
+        method: 'post',
+        url: `${process.env.REACT_APP_API_ENDPOINT}:3001/users/`, // eslint-disable-line
+        data: {
+          uid: uid,
+          name: name,
+          signInType: signInType,
+        },
+      }).then((res) => {
+        console.log('res', res.data);
+      });
+    }
+  };
 
   const googleSignIn = () => {
     signInWithPopup(auth, googleProvider)
@@ -35,7 +53,8 @@ export const SnsSignIn = () => {
         // The signed-in user info.
         const user = result.user;
         console.log({ token: token, user: user });
-        navigate('/');
+
+        createDynamodbUser(user.uid, user.displayName, 'google');
       })
       .catch((error) => {
         console.log(error);
@@ -45,14 +64,14 @@ export const SnsSignIn = () => {
     signInWithPopup(auth, twitterProvider)
       .then((result) => {
         // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
-        // You can use these server side with your app's credentials to access the Twitter API.        
+        // You can use these server side with your app's credentials to access the Twitter API.
         const credential = TwitterAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
-        
         // The signed-in user info.
         const user = result.user;
         console.log({ token: token, user: user });
-        navigate('/');
+
+        createDynamodbUser(user.uid, user.displayName, 'twitter');
       })
       .catch((error) => {
         console.log(error);

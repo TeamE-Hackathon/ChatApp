@@ -11,6 +11,7 @@ import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import axios from 'axios';
 import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, updateProfile } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink, Navigate, useNavigate } from 'react-router-dom';
@@ -34,6 +35,22 @@ export const SignUp = () => {
 
   const navigate = useNavigate();
   const auth = getAuth();
+
+  const createDynamodbUser = (uid, name, signInType) => {
+    axios({
+      method: 'post',
+      url: `${process.env.REACT_APP_API_ENDPOINT}:3001/users/`, // eslint-disable-line
+      data: {
+        uid: uid,
+        name: name,
+        signInType: signInType,
+      },
+    }).then((res) => {
+      console.log('res', res.data);
+      navigate('/');
+    });
+  };
+
   const updateAdditionalProfile = () => {
     const additionalProfile = {
       displayName: `${userFirstName} ${userLastName}`,
@@ -42,8 +59,10 @@ export const SignUp = () => {
     updateProfile(auth.currentUser, additionalProfile)
       .then(() => {
         // Profile updated!
-        console.log({ updatedUser: auth.currentUser });
-        navigate('/');
+        const user = auth.currentUser;
+        console.log({ updatedUser: user });
+
+        createDynamodbUser(user.uid, additionalProfile.displayName, 'email');
       })
       .catch((error) => {
         console.log({ error: error });

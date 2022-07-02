@@ -14,11 +14,11 @@ const dynamoDB = new AWS.DynamoDB({ apiVersion: '2022-05-15' });
 const params = {
   TableName: 'users',
   AttributeDefinitions: [
-    { AttributeName: 'Id', AttributeType: 'S' },
+    { AttributeName: 'Uid', AttributeType: 'S' },
     { AttributeName: 'CreatedAt', AttributeType: 'S' },
   ],
   KeySchema: [
-    { AttributeName: 'Id', KeyType: 'HASH' },
+    { AttributeName: 'Uid', KeyType: 'HASH' },
     { AttributeName: 'CreatedAt', KeyType: 'RANGE' },
   ],
   ProvisionedThroughput: {
