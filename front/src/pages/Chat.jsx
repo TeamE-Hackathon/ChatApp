@@ -34,7 +34,10 @@ export const NewChat = () => {
       socket.emit('join_room', roomName);
     }
   };
-  const loadChats = (room) => {
+  const loadChats = async (room) => {
+    const { data: roomInfo } = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/rooms/${room}`); // eslint-disable-line
+    setRoomName(roomInfo.length > 0 ? room : null);
+
     // eslint-disable-next-line no-undef
     axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/chats/${room}`).then((res) => {
       // keyを変更
@@ -42,7 +45,7 @@ export const NewChat = () => {
         const { RoomName: roomName, CreatedAt: createdAt, Message: message, UserName: userName } = data;
         return { roomName: roomName, createdAt: createdAt, message: message, userName: userName };
       });
-      setRoomName(pastChats.length > 0 ? room : null);
+      // setRoomName(pastChats.length > 0 ? room : null);
       setMessageList(pastChats);
     });
   };

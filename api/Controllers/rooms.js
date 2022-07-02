@@ -1,8 +1,8 @@
-const { PutCommand, ScanCommand } = require('@aws-sdk/lib-dynamodb');
+const { PutCommand, ScanCommand, QueryCommand } = require('@aws-sdk/lib-dynamodb');
 const { ddbDocClient } = require('../initDB');
 const { nowTime } = require('../utils/dateTime');
 
-const TABLENAME = "rooms";
+const TABLENAME = 'rooms';
 
 module.exports = {
   getAllRooms: async (req, res) => {
@@ -13,11 +13,11 @@ module.exports = {
       const data = await ddbDocClient.send(new ScanCommand(getAllRoomsParams));
       res.json(data.Items);
     } catch (err) {
-      console.log("Error", err);
+      console.log('Error', err);
     }
   },
   postNewRoom: async (req, res) => {
-    console.log("postNewRoom_param.body", req.body);
+    console.log('postNewRoom_param.body', req.body);
 
     const postNewRoomParam = {
       TableName: TABLENAME,
@@ -29,10 +29,26 @@ module.exports = {
     };
     try {
       const data = await ddbDocClient.send(new PutCommand(postNewRoomParam));
-      console.log("Success - item added or updated", data);
+      console.log('Success - item added or updated', data);
       return res.json(data);
     } catch (err) {
-      console.log("Error", err);
+      console.log('Error', err);
     }
-  }
-}
+  },
+  findRoomById: async (req, res) => {
+    const getRoomParams = {
+      TableName: TABLENAME,
+      KeyConditionExpression: 'RoomName = :roomName',
+      ExpressionAttributeValues: {
+        ':roomName': `${req.params.roomName}`,
+      },
+    };
+    try {
+      const data = await ddbDocClient.send(new QueryCommand(getRoomParams));
+      console.log('--------------------------------', data);
+      res.json(data.Items);
+    } catch (err) {
+      console.log('Error', err);
+    }
+  },
+};
