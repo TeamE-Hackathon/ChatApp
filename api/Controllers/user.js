@@ -1,110 +1,44 @@
-const createError = require('http-errors');
-const mongoose = require('mongoose');
+const { PutCommand, ScanCommand } = require('@aws-sdk/lib-dynamodb');
+const { ddbDocClient } = require('../initDB');
+const { nowTime } = require('../utils/dateTime');
 
-const User = require('../Models/User.model');
+const TABLENAME = 'users';
 
 module.exports = {
-  getAllUsers: async (req, res, next) => {
+  getAllUsers: async (req, res) => {
+    const getAllUsersParams = {
+      TableName: TABLENAME,
+    };
     try {
-      const results = await User.find();
-      // const results = await User.find({}, { __v: 0 });
-      // const results = await User.find({}, { name: 1, price: 1, _id: 0 });
-      // const results = await User.find({ price: 699 }, {});
-      res.send(results);
-    } catch (error) {
-      console.log(error.message);
+      const data = await ddbDocClient.send(new ScanCommand(getAllUsersParams));
+      res.json(data.Items);
+    } catch (err) {
+      console.log('Error', err);
     }
   },
 
-  createNewUser: async (req, res, next) => {
+  createNewUser: async (req, res) => {
+    const createNewUserParam = {
+      TableName: TABLENAME,
+      Item: {
+        Uid: req.body.uid,
+        CreatedAt: nowTime(),
+        Name: req.body.name,
+        SignInType: req.body.signInType,
+      },
+    };
     try {
-      const user = new User(req.body);
-      const result = await user.save();
-      res.send(result);
+      const data = await ddbDocClient.send(new PutCommand(createNewUserParam));
+      console.log('Success - item added or updated', data);
+      return res.json(data);
     } catch (error) {
-      console.log(error.message);
-      if (error.name === 'ValidationError') {
-        next(createError(422, error.message));
-        return;
-      }
-      next(error);
-    }
-
-    /*Or:
-  If you want to use the Promise based approach*/
-    /*
-  const user = new User({
-    name: req.body.name,
-    price: req.body.price
-  });
-  user
-    .save()
-    .then(result => {
-      console.log(result);
-      res.send(result);
-    })
-    .catch(err => {
-      console.log(err.message);
-    });
-    */
-  },
-
-  findUserById: async (req, res, next) => {
-    const id = req.params.id;
-    try {
-      const user = await User.findById(id);
-      // const user = await User.findOne({ _id: id });
-      if (!user) {
-        throw createError(404, 'User does not exist.');
-      }
-      res.send(user);
-    } catch (error) {
-      console.log(error.message);
-      if (error instanceof mongoose.CastError) {
-        next(createError(400, 'Invalid User id'));
-        return;
-      }
-      next(error);
+      console.log('Error', error);
     }
   },
 
-  updateAUser: async (req, res, next) => {
-    try {
-      const id = req.params.id;
-      const updates = req.body;
-      const options = { new: true };
+  findUserById: async (req, res) => {},
 
-      const result = await User.findByIdAndUpdate(id, updates, options);
-      if (!result) {
-        throw createError(404, 'User does not exist');
-      }
-      res.send(result);
-    } catch (error) {
-      console.log(error.message);
-      if (error instanceof mongoose.CastError) {
-        return next(createError(400, 'Invalid User Id'));
-      }
+  updateAUser: async (req, res) => {},
 
-      next(error);
-    }
-  },
-
-  deleteAUser: async (req, res, next) => {
-    const id = req.params.id;
-    try {
-      const result = await User.findByIdAndDelete(id);
-      // console.log(result);
-      if (!result) {
-        throw createError(404, 'User does not exist.');
-      }
-      res.send(result);
-    } catch (error) {
-      console.log(error.message);
-      if (error instanceof mongoose.CastError) {
-        next(createError(400, 'Invalid User id'));
-        return;
-      }
-      next(error);
-    }
-  },
+  deleteAUser: async (req, res) => {},
 };
