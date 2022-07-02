@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import axios from 'axios';
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, TwitterAuthProvider } from 'firebase/auth';
 import { useEffect, useState } from 'react';
-import { Link as RouterLink, Navigate, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, Navigate } from 'react-router-dom';
 import { GoogleSigninButton } from '../components/button/GoogleSigninButton';
 import { TwitterSigninButton } from '../components/button/TwitterSigninButton';
 import { Copyright } from '../components/footer/Copyright';
@@ -23,7 +23,6 @@ export const SnsSignIn = () => {
   const [user, setUser] = useState('');
   const [loaded, setLoaded] = useState(false);
 
-  const navigate = useNavigate();
   const googleProvider = new GoogleAuthProvider();
   const twitterProvider = new TwitterAuthProvider();
 
@@ -41,7 +40,6 @@ export const SnsSignIn = () => {
         },
       }).then((res) => {
         console.log('res', res.data);
-        navigate('/');
       });
     }
   };
