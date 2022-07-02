@@ -61,7 +61,7 @@ export default function Header() {
                   color='primary'
                   sx={{ flexGrow: 1, fontStyle: 'oblique', fontSize: '30px' }}
                 >
-                  Chat App
+                  ChaChat
                 </Typography>
               </Link>
             </div>
