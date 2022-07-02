@@ -206,7 +206,7 @@ export const NewChat = () => {
                                   <p>{messageContent.message}</p>
                                 </ChatMessage>
                                 <MessageMeta>
-                                  <p id='createdAt'>{messageContent.createdAt}</p>
+                                  <p id='createdAt'>{messageContent.createdAt.slice(0, 5)}</p>
                                   <MessageName>
                                     <p id='userName'>{messageContent.userName}</p>
                                   </MessageName>
