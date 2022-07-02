@@ -66,11 +66,9 @@ export default function HamburgerMenu() {
           </Link>
         ) : (
           <>
-            <Link to='/sns-signin' style={{ textDecoration: 'none', color: '#1976d2' }}>
-              <ListItem>
-                <ListItemText primary='SIGN OUT' onClick={userSignOut} />
-              </ListItem>
-            </Link>
+            <ListItem sx={{ color: '#1976d2', cursor: 'pointer' }}>
+              <ListItemText primary='SIGN OUT' onClick={userSignOut} />
+            </ListItem>
             <Divider />
             <Link to={`/mypages/${user.displayName}`} style={{ textDecoration: 'none', color: '#1976d2' }}>
               <ListItem>
