@@ -27,6 +27,25 @@ export const SnsSignIn = () => {
   const googleProvider = new GoogleAuthProvider();
   const twitterProvider = new TwitterAuthProvider();
 
+  const createDynamodbUser = (uid, name, signInType) => {
+    // const { data: userInfo } = axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/users/:uid`); // eslint-disable-line
+    // if (userInfo) {
+    //   return;
+    // }
+    axios({
+      method: 'post',
+      url: `${process.env.REACT_APP_API_ENDPOINT}:3001/users/`, // eslint-disable-line
+      data: {
+        uid: uid,
+        name: name,
+        signInType: signInType,
+      },
+    }).then((res) => {
+      console.log('res', res.data);
+      navigate('/');
+    });
+  };
+
   const googleSignIn = () => {
     signInWithPopup(auth, googleProvider)
       .then((result) => {
@@ -37,23 +56,7 @@ export const SnsSignIn = () => {
         const user = result.user;
         console.log({ token: token, user: user });
 
-        // const { data: userInfo } = axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/users/:uid`); // eslint-disable-line
-        // if (userInfo) {
-        //   return;
-        // }
-
-        axios({
-          method: 'post',
-          url: `${process.env.REACT_APP_API_ENDPOINT}:3001/users/`, // eslint-disable-line
-          data: {
-            uid: user.uid,
-            name: user.displayName,
-            signInType: 'google',
-          },
-        }).then((res) => {
-          console.log('res', res.data);
-          navigate('/');
-        });
+        createDynamodbUser(user.id, user.displayName, 'google');
       })
       .catch((error) => {
         console.log(error);
@@ -66,11 +69,11 @@ export const SnsSignIn = () => {
         // You can use these server side with your app's credentials to access the Twitter API.
         const credential = TwitterAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
-
         // The signed-in user info.
         const user = result.user;
         console.log({ token: token, user: user });
-        navigate('/');
+
+        createDynamodbUser(user.id, user.displayName, 'twitter');
       })
       .catch((error) => {
         console.log(error);
