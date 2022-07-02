@@ -37,6 +37,9 @@ app.use(express.urlencoded({ extended: true })); // for parsing application/x-ww
 const roomRouter = require('./routes/room');
 app.use('/rooms', roomRouter);
 
+const userRouter = require('./routes/user');
+app.use('/users', userRouter);
+
 const chatsRouter = require('./routes/chats');
 app.use('/chats', chatsRouter);
 
