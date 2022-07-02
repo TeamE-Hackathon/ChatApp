@@ -64,7 +64,12 @@ export const NewChat = () => {
         roomName: roomName,
         userName: userName,
         message: currentMessage,
-        createdAt: new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes(),
+        createdAt:
+          new Date(Date.now()).getHours() +
+          ':' +
+          new Date(Date.now()).getMinutes() +
+          ':' +
+          new Date(Date.now()).getSeconds(),
       };
 
       await socket.emit('send_message', messageData);
