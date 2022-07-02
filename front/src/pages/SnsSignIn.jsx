@@ -8,6 +8,7 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import axios from 'axios';
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, TwitterAuthProvider } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink, Navigate, useNavigate } from 'react-router-dom';
@@ -35,7 +36,24 @@ export const SnsSignIn = () => {
         // The signed-in user info.
         const user = result.user;
         console.log({ token: token, user: user });
-        navigate('/');
+
+        // const { data: userInfo } = axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/users/:uid`); // eslint-disable-line
+        // if (userInfo) {
+        //   return;
+        // }
+
+        axios({
+          method: 'post',
+          url: `${process.env.REACT_APP_API_ENDPOINT}:3001/users/`, // eslint-disable-line
+          data: {
+            uid: user.uid,
+            name: user.displayName,
+            signInType: 'google',
+          },
+        }).then((res) => {
+          console.log('res', res.data);
+          navigate('/');
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -45,10 +63,10 @@ export const SnsSignIn = () => {
     signInWithPopup(auth, twitterProvider)
       .then((result) => {
         // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
-        // You can use these server side with your app's credentials to access the Twitter API.        
+        // You can use these server side with your app's credentials to access the Twitter API.
         const credential = TwitterAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
-        
+
         // The signed-in user info.
         const user = result.user;
         console.log({ token: token, user: user });
