@@ -34,10 +34,10 @@ const io = new Server(server, {
 
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-const roomRouter = require('./routes/room');
+const roomRouter = require('./Routes/rooms');
 app.use('/rooms', roomRouter);
 
-const userRouter = require('./routes/user');
+const userRouter = require('./Routes/users');
 app.use('/users', userRouter);
 
 const chatsRouter = require('./routes/chats');
