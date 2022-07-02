@@ -27,23 +27,23 @@ export const SnsSignIn = () => {
   const googleProvider = new GoogleAuthProvider();
   const twitterProvider = new TwitterAuthProvider();
 
-  const createDynamodbUser = (uid, name, signInType) => {
-    // const { data: userInfo } = axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/users/:uid`); // eslint-disable-line
-    // if (userInfo) {
-    //   return;
-    // }
-    axios({
-      method: 'post',
-      url: `${process.env.REACT_APP_API_ENDPOINT}:3001/users/`, // eslint-disable-line
-      data: {
-        uid: uid,
-        name: name,
-        signInType: signInType,
-      },
-    }).then((res) => {
-      console.log('res', res.data);
-      navigate('/');
-    });
+  const createDynamodbUser = async (uid, name, signInType) => {
+    const { data: userInfo } = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/users/${uid}`); // eslint-disable-line
+    // 初めてサインインする場合にDynamoDBにユーザ情報を保存
+    if (userInfo.length === 0) {
+      axios({
+        method: 'post',
+        url: `${process.env.REACT_APP_API_ENDPOINT}:3001/users/`, // eslint-disable-line
+        data: {
+          uid: uid,
+          name: name,
+          signInType: signInType,
+        },
+      }).then((res) => {
+        console.log('res', res.data);
+        navigate('/');
+      });
+    }
   };
 
   const googleSignIn = () => {
@@ -56,7 +56,7 @@ export const SnsSignIn = () => {
         const user = result.user;
         console.log({ token: token, user: user });
 
-        createDynamodbUser(user.id, user.displayName, 'google');
+        createDynamodbUser(user.uid, user.displayName, 'google');
       })
       .catch((error) => {
         console.log(error);
@@ -73,7 +73,7 @@ export const SnsSignIn = () => {
         const user = result.user;
         console.log({ token: token, user: user });
 
-        createDynamodbUser(user.id, user.displayName, 'twitter');
+        createDynamodbUser(user.uid, user.displayName, 'twitter');
       })
       .catch((error) => {
         console.log(error);

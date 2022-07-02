@@ -1,4 +1,4 @@
-const { PutCommand, ScanCommand } = require('@aws-sdk/lib-dynamodb');
+const { PutCommand, ScanCommand, QueryCommand } = require('@aws-sdk/lib-dynamodb');
 const { ddbDocClient } = require('../initDB');
 const { nowTime } = require('../utils/dateTime');
 
@@ -36,7 +36,22 @@ module.exports = {
     }
   },
 
-  findUserById: async (req, res) => {},
+  findUserById: async (req, res) => {
+    const getUserParams = {
+      TableName: TABLENAME,
+      KeyConditionExpression: 'Uid = :uid',
+      ExpressionAttributeValues: {
+        ':uid': `${req.params.uid}`,
+      },
+    };
+    try {
+      const data = await ddbDocClient.send(new QueryCommand(getUserParams));
+      console.log('--------------------------------', data);
+      res.json(data.Items);
+    } catch (err) {
+      console.log('Error', err);
+    }
+  },
 
   updateAUser: async (req, res) => {},
 
