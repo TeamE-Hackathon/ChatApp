@@ -1,0 +1,217 @@
+AWSTemplateFormatVersion: "2010-09-09" #任意だけど書く
+Description: VPC for ChaChat
+
+#======================
+# パラメーター
+#======================
+Parameters:
+  # プロジェクト名を入力する。各リソースのNameタグの値となる。
+  EnvironmentName:
+    Description: An environment name that is prefixed to resource names
+    Type: String
+
+Resources: #テンプレートにおいて唯一必須のセッション。スタックに含める、VPCやEC2インスタンスやS3バケットなどのリソースを宣言します。
+  #==================================================================
+  # VPC作成
+  #==================================================================
+  VPC: # Logical ID (テンプレート内で一意なID。スタックのリソース一覧にも、このIDでリソースが表示されます。)
+    Type: AWS::EC2::VPC # 使いたいサービスに対応しているリソースタイプはAWSリファレンスに一覧があるので毎回調べる
+    Properties: # 各リソースの作成時に指定するプロパティ。リソースタイプによって利用できるプロパティは異なるので、公式ドキュメントとにらめっこしながら、指定していく
+      CidrBlock: 10.0.0.0/21
+      Tags: # これがないとVPCの名前が-になる
+        - Key: Name
+          Value: !Ref EnvironmentName #EnvironmentNameの方が良さそう(プロジェクトに一つ作ることが多いからプロジェクト名)
+  PublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: "ap-northeast-1a"
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.0.0/24
+      Tags:
+        - Key: Name
+          Value: PublicSubnetA
+  PublicSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: "ap-northeast-1c"
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      Tags:
+        - Key: Name
+          Value: PublicSubnetB
+  PrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: "ap-northeast-1a"
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.2.0/24
+      Tags:
+        - Key: Name
+          Value: PrivateSubnetA
+  PrivateSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: "ap-northeast-1c"
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.3.0/24
+      Tags:
+        - Key: Name
+          Value: PrivateSubnetB
+
+  #==================================================================
+  # VPCにインターネットゲートウェイをアタッチ
+  #==================================================================
+  IGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Ref EnvironmentName #プロジェクト名つけるのが無難そう
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref IGW
+
+  #==================================================================
+  # PublicAにNAT Gatewayを作成する (NATはマルチAZにしていない)
+  #==================================================================
+
+  # NATGatewayをパブリックサブネットAに作成する
+  NatGatewayPublicA:
+    Type: AWS::EC2::NatGateway
+    DependsOn: EIP
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - EIP
+          - AllocationId
+      SubnetId: !Ref PublicSubnetA
+
+  EIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  # NAT Gateway用のルーティングをプライベートサブネットのルートテーブルに追加する
+  # Nat-PrivateA
+  PrivateRouteA:
+    Type: AWS::EC2::Route
+    DependsOn: NatGatewayPublicA
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableA
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGatewayPublicA
+  # Nat-PrivateB
+  PrivateRouteB:
+    Type: AWS::EC2::Route
+    DependsOn: NatGatewayPublicA
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableB
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGatewayPublicA
+
+  #==================================================================
+  # 2つのサブネットにルートテーブルの作成し、publicサブネットにする
+  #==================================================================
+
+  # --------------------- route table ---------------------
+  PublicRouteTableA:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      Tags:
+        - Key: Name
+          Value: PublicRouteTableA
+      VpcId: !Ref VPC
+  PublicRouteTableB:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      Tags:
+        - Key: Name
+          Value: PublicRouteTableB
+      VpcId: !Ref VPC
+
+  PrivateRouteTableA:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      Tags:
+        - Key: Name
+          Value: PrivateRouteTableA
+      VpcId: !Ref VPC
+  PrivateRouteTableB:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      Tags:
+        - Key: Name
+          Value: PrivateRouteTableB
+      VpcId: !Ref VPC
+
+  # --------------------- route table の中の設定 ---------------------
+  PublicRouteA:
+    Type: "AWS::EC2::Route"
+    DependsOn: VPCGatewayAttachment # 依存関係あり
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref IGW
+      RouteTableId: !Ref PublicRouteTableA
+  PublicRouteB:
+    Type: "AWS::EC2::Route"
+    DependsOn: VPCGatewayAttachment # 依存関係あり
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref IGW
+      RouteTableId: !Ref PublicRouteTableB
+
+  # --------------------- 作成したroute table とサブネットを紐づける ---------------------
+  PublicRouteTableAssociationA:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref PublicRouteTableA
+      SubnetId: !Ref PublicSubnetA
+  PublicRouteTableAssociationB:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref PublicRouteTableB
+      SubnetId: !Ref PublicSubnetB
+
+  PrivateRouteTableAssociationA:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableA
+      SubnetId: !Ref PrivateSubnetA
+  PrivateRouteTableAssociationB:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableB
+      SubnetId: !Ref PrivateSubnetB
+
+Outputs:
+  VPC:
+    Description: VPC
+    Value: !Ref VPC
+    Export:
+      Name: "VPC"
+
+  PublicSubnetA:
+    Description: "public subnetA on ap-northeast-1a"
+    Value: !Ref PublicSubnetA
+    Export:
+      Name: "PublicSubnetA"
+
+  PublicSubnetB:
+    Description: "public subnetB on ap-northeast-1c"
+    Value: !Ref PublicSubnetB
+    Export:
+      Name: "PublicSubnetB"
+
+  PrivateSubnetA:
+    Description: "private subnetA on ap-northeast-1a"
+    Value: !Ref PrivateSubnetA
+    Export:
+      Name: "PrivateSubnetA"
+
+  PrivateSubnetB:
+    Description: "private subnetB on ap-northeast-1c"
+    Value: !Ref PrivateSubnetB
+    Export:
+      Name: "PrivateSubnetB"

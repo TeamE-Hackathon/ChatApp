@@ -1,0 +1,94 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: roles and policies
+Resources:
+  # 起動されるECSコンテナエージェントで使用されるIAMロール
+  ECSTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Path: /
+      # ロールを作ったら何に使うのか？sts:AssumeRole
+      # AssumeRoleはSTSに対するAPIアクションの一つ。このリクエストによって、役割(role)を引き受ける(assume)ことができる。
+      # AssumeRoleはRoleArn(IAM Roleの一意な名前)を入力するとCredentials(一時キーで、有効期限は1時間)を返すAPI
+      # UNIXコマンドのsu もしくは、別人に成りすますための「お面」をかぶるイメージ
+      # AssumeRolePolicyDocumentは、各ロール毎に、第三者に対して明示的に引き受けを許可する設定する項目(セキュリティ)
+      # Prinipal(主体)でその第三者を指定する
+      # ecs-tasksがAssumeRoleできるようになった
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: [ecs-tasks.amazonaws.com]
+          Action: ['sts:AssumeRole']
+      Policies:
+        - 
+        # AWS マネージドポリシーの AmazonECSTaskExecutionRolePolicy を使った方が良いかも(やっていることは同じ)
+         PolicyName: task-policy
+         PolicyDocument:
+           Version: "2012-10-17"
+           Statement:
+              - 
+                Effect: "Allow"
+                Action:
+                  # ECS Tasks to download images from ECR
+                  - 'ecr:GetAuthorizationToken'
+                  - 'ecr:BatchCheckLayerAvailability'
+                  - 'ecr:GetDownloadUrlForLayer'
+                  - 'ecr:BatchGetImage'
+                  # ECS tasks to upload logs to CloudWatch
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource: "*"
+
+  # タスクロール: コンテナで使用されるIAMロール。コンテナが他AWSサービスと連携する際に変更が必要
+  ECSTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: task-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "ssmmessages:CreateControlChannel"
+                  - "ssmmessages:CreateDataChannel"
+                  - "ssmmessages:OpenControlChannel"
+                  - "ssmmessages:OpenDataChannel"
+                Resource: "*"
+
+  # EcsExecRolePolicy:
+  #   Type: AWS::IAM::Policy
+  #   Properties:
+  #     PolicyName: Ecs-exec-role
+  #     PolicyDocument:
+  #       Version: 2012-10-17
+  #       Statement:
+  #         - Effect: Allow
+  #           Action:
+  #             - "ssmmessages:CreateControlChannel"
+  #             - "ssmmessages:CreateDataChannel"
+  #             - "ssmmessages:OpenControlChannel"
+  #             - "ssmmessages:OpenDataChannel"
+  #           Resource: "*"
+  #     # ECSのタスク実行ロールではないので注意
+  #     Roles:
+  #       - !Ref ECSTaskExecutionRole
+
+Outputs:
+  ECSTaskExecutionRole:
+    Description: ECS Task Execution Role
+    Value: !GetAtt 'ECSTaskExecutionRole.Arn'
+    Export:
+      Name: 'ECSTaskExecutionRole'
+  ECSTaskRole:
+    Description: ECS Task Role
+    Value: !GetAtt 'ECSTaskRole.Arn'
+    Export:
+      Name: 'ECSTaskRole'

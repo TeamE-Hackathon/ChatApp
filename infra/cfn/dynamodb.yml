@@ -1,0 +1,213 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  chats:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: UserName
+          KeyType: HASH
+        - AttributeName: CreatedAt
+          KeyType: RANGE
+      AttributeDefinitions:
+        - AttributeName: UserName
+          AttributeType: S
+        - AttributeName: CreatedAt
+          AttributeType: S
+        - AttributeName: RoomName
+          AttributeType: S
+      GlobalSecondaryIndexes:
+        - IndexName: chatsGSI
+          KeySchema:
+            - AttributeName: RoomName
+              KeyType: HASH
+            - AttributeName: CreatedAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - Message
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+      BillingMode: PROVISIONED
+      TableName: chats
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+  TablechatsReadCapacityScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    DependsOn: chats
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: table/chats
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: 1
+      MaxCapacity: 10
+      RoleARN:
+        Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+  TablechatsReadCapacityScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    DependsOn: TablechatsReadCapacityScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: table/chats
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      PolicyName: chats-read-capacity-scaling-policy
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        ScaleOutCooldown: 60
+        ScaleInCooldown: 60
+        TargetValue: 70
+  TablechatsWriteCapacityScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    DependsOn: chats
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: table/chats
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: 1
+      MaxCapacity: 10
+      RoleARN:
+        Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+  TablechatsWriteCapacityScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    DependsOn: TablechatsWriteCapacityScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: table/chats
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      PolicyName: chats-write-capacity-scaling-policy
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        ScaleOutCooldown: 60
+        ScaleInCooldown: 60
+        TargetValue: 70
+  TablechatsIndexchatsGSIReadCapacityScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    DependsOn: chats
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: table/chats/index/chatsGSI
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      MinCapacity: 1
+      MaxCapacity: 10
+      RoleARN:
+        Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+  TablechatsIndexchatsGSIReadCapacityScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    DependsOn: TablechatsIndexchatsGSIReadCapacityScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: table/chats/index/chatsGSI
+      ScalableDimension: dynamodb:index:ReadCapacityUnits
+      PolicyName: chats-index-chatsGSI-read-capacity-scaling-policy
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        ScaleOutCooldown: 60
+        ScaleInCooldown: 60
+        TargetValue: 70
+  TablechatsIndexchatsGSIWriteCapacityScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    DependsOn: chats
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: table/chats/index/chatsGSI
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      MinCapacity: 1
+      MaxCapacity: 10
+      RoleARN:
+        Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+  TablechatsIndexchatsGSIWriteCapacityScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    DependsOn: TablechatsIndexchatsGSIWriteCapacityScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: table/chats/index/chatsGSI
+      ScalableDimension: dynamodb:index:WriteCapacityUnits
+      PolicyName: chats-index-chatsGSI-write-capacity-scaling-policy
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        ScaleOutCooldown: 60
+        ScaleInCooldown: 60
+        TargetValue: 70
+  # ------------------------- rooms -----------------------------------#
+  rooms:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: RoomName
+          KeyType: HASH
+        - AttributeName: CreatedAt
+          KeyType: RANGE
+      AttributeDefinitions:
+        - AttributeName: RoomName
+          AttributeType: S
+        - AttributeName: CreatedAt
+          AttributeType: S
+      GlobalSecondaryIndexes: []
+      BillingMode: PROVISIONED
+      TableName: rooms
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+    DependsOn: chats
+  TableroomsReadCapacityScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    DependsOn: rooms
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: table/rooms
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      MinCapacity: 1
+      MaxCapacity: 10
+      RoleARN:
+        Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+  TableroomsReadCapacityScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    DependsOn: TableroomsReadCapacityScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: table/rooms
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      PolicyName: rooms-read-capacity-scaling-policy
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+        ScaleOutCooldown: 60
+        ScaleInCooldown: 60
+        TargetValue: 70
+  TableroomsWriteCapacityScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    DependsOn: rooms
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: table/rooms
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      MinCapacity: 1
+      MaxCapacity: 10
+      RoleARN:
+        Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+  TableroomsWriteCapacityScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    DependsOn: TableroomsWriteCapacityScalableTarget
+    Properties:
+      ServiceNamespace: dynamodb
+      ResourceId: table/rooms
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      PolicyName: rooms-write-capacity-scaling-policy
+      PolicyType: TargetTrackingScaling
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+        ScaleOutCooldown: 60
+        ScaleInCooldown: 60
+        TargetValue: 70

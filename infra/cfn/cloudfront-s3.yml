@@ -1,0 +1,141 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  EnvironmentName:
+    Description: An environment name that is prefixed to resource names
+    Type: String
+  # MinimumProtocolVersion:
+  #   Type: String
+  # SslSupportMethod:
+  #   Type: String
+  # CertificateARN:
+  #   Type: String
+
+Resources:
+  S3bucketForOrigin:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${EnvironmentName}-${AWS::AccountId}
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - Authorization
+              - Content-Length
+            AllowedMethods:
+              - GET
+            AllowedOrigins:
+              - "*"
+            MaxAge: 3000
+  S3BucketPolicy:
+    Type: "AWS::S3::BucketPolicy"
+    DependsOn: OAI
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Sid: APIReadForGetBucketObjects
+            Effect: Allow
+            Principal:
+              CanonicalUser: !GetAtt
+                - OAI
+                - S3CanonicalUserId
+            Action: "s3:GetObject"
+            Resource: !Join
+              - ""
+              - - "arn:aws:s3:::"
+                - !Ref S3bucketForOrigin
+                - /*
+      Bucket: !Ref S3bucketForOrigin
+  OAI:
+    Type: "AWS::CloudFront::CloudFrontOriginAccessIdentity"
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: OAIConfig
+  CloudFrontDistribution:
+    Type: "AWS::CloudFront::Distribution"
+    DependsOn:
+      - S3bucketForOrigin
+      - OAI
+    Properties:
+      DistributionConfig:
+        # Aliases:
+        #   - !Sub ${BucketName} // Route53 CNAMEで使うかも
+        PriceClass: PriceClass_200 # 値段抑える
+        HttpVersion: http2
+        Origins:
+          - DomainName: !GetAtt
+              - S3bucketForOrigin
+              - DomainName
+            Id: !Sub S3bucketForOrigin
+            S3OriginConfig:
+              OriginAccessIdentity: !Join
+                - ""
+                - - origin-access-identity/cloudfront/
+                  - !Ref OAI
+        # リバースプロキシとして他のパスもオリジンに設定する
+        # (elb-applica-v33fqhyr3eli-1585679030.ap-northeast-1.elb.amazonaws.com)
+        Enabled: "true"
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - DELETE
+            - GET
+            - HEAD
+            - OPTIONS
+            - PATCH
+            - POST
+            - PUT
+          TargetOriginId: S3bucketForOrigin
+          ForwardedValues:
+            QueryString: "false"
+          ViewerProtocolPolicy: redirect-to-https
+          DefaultTTL: 86400
+          MaxTTL: 31536000
+          MinTTL: 60
+          Compress: true
+        DefaultRootObject: index.html
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 300
+            ErrorCode: 400
+            ResponseCode: 200
+            ResponsePagePath: /
+          - ErrorCachingMinTTL: 300
+            ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /
+          - ErrorCachingMinTTL: 300
+            ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /
+        # ViewerCertificate:
+        #   AcmCertificateArn: !Sub ${CertificateARN}
+        #   MinimumProtocolVersion: !Sub ${MinimumProtocolVersion}
+        #   SslSupportMethod: !Sub ${SslSupportMethod}
+
+Outputs:
+  S3bucketForOrigin:
+    Value: !Ref S3bucketForOrigin
+  S3BucketSecureURL:
+    Value: !Join
+      - ""
+      - - "https://"
+        - !GetAtt
+          - S3bucketForOrigin
+          - DomainName
+  CloudFrontDistributionID:
+    Value: !Ref CloudFrontDistribution
+    Export:
+      Name: !Sub ${EnvironmentName}-CloudFrontDistributionID
+  CloudFrontDomainName:
+    Value: !GetAtt
+      - CloudFrontDistribution
+      - DomainName
+    Export:
+      Name: !Sub ${EnvironmentName}-CloudFrontDomainName
+  CloudFrontSecureURL:
+    Value: !Join
+      - ""
+      - - "https://"
+        - !GetAtt
+          - CloudFrontDistribution
+          - DomainName
+  OAI:
+    Value: !Ref OAI

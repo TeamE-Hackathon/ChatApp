@@ -1,0 +1,101 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: container on ecs cluster
+
+Resources:
+  Task:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: apis #必須(タスク定義: apis:番号 と表示される)
+      ExecutionRoleArn: !ImportValue ECSTaskExecutionRole #タスク実行ロール(ECSエージェントにアタッチ)
+      TaskRoleArn: !ImportValue ECSTaskRole #タスクロール(タスクにアタッチ)
+      Cpu: 256
+      Memory: 512
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      ContainerDefinitions:
+        - Name: hello-golang-container
+          Image: 814875037354.dkr.ecr.ap-northeast-1.amazonaws.com/hello-golang-repo:v1
+          Cpu: 256
+          Memory: 512
+          # HostPortとContainerPortは同じでないとエラーになる. main.goのlistenしているポートに合わせる
+          PortMappings:
+            - HostPort: 80
+              ContainerPort: 80
+              Protocol: tcp
+          # LinuxParameter:
+          #   initProcessEnabled: true # 追加
+          HealthCheck:
+            Command:
+              - "CMD-SHELL"
+              - "curl -f http://localhost/health || exit 1"
+            Interval: 5
+            Timeout: 2
+            Retries: 3
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: "apis-for-hello-golang"
+              awslogs-region: "ap-northeast-1"
+              awslogs-stream-prefix: "hello-golang-api"
+
+  Service:
+    Type: AWS::ECS::Service
+    # DependsOn: ListenerRule
+    Properties:
+      ServiceName: hello-golang-service
+      TaskDefinition: !Ref Task
+      Cluster: !ImportValue "ECSCluster"
+      LaunchType: FARGATE
+      DesiredCount: 1 #タスク定義のインスタンス数
+      EnableExecuteCommand: true # ExecCommandでfargateに入れるようにする
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 70
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED #タスクのエラスティックネットワークインターフェイスがパブリックIPアドレスを受信するかどうか。デフォルト値はDISABLED
+          # AssignPublicIp: ENABLED #タスクのエラスティックネットワークインターフェイスがパブリックIPアドレスを受信するかどうか。デフォルト値はDISABLED
+          Subnets:
+            - !ImportValue PublicSubnet1
+            - !ImportValue PublicSubnet2
+          SecurityGroups:
+            - !ImportValue ContainerSecurityGroup
+      # LoadBalancers:
+      #   - ContainerName: booksapi
+      #     ContainerPort: 4567
+      #     TargetGroupArn: !Ref TargetGroup
+  # TargetGroup:
+  #   Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  #   Properties:
+  #     Name: books-tg
+  #     VpcId: !ImportValue VPC
+  #     Port: 80
+  #     Protocol: HTTP
+  #     Matcher:
+  #       HttpCode: 200-299
+  #     HealthCheckIntervalSeconds: 10
+  #     HealthCheckPath: /stat
+  #     HealthCheckProtocol: HTTP
+  #     HealthCheckTimeoutSeconds: 5
+  #     HealthyThresholdCount: 10
+  #     TargetType: ip
+  # ListenerRule:
+  #   Type: AWS::ElasticLoadBalancingV2::ListenerRule
+  #   Properties:
+  #     ListenerArn: !ImportValue Listener
+  #     Priority: 2
+  #     Conditions:
+  #       - Field: path-pattern
+  #         Values:
+  #           - /api/book*
+  #     Actions:
+  #       - TargetGroupArn: !Ref TargetGroup
+  #         Type: forward
+# Outputs:
+
+#   ApiEndpoint:
+#     Description: Books API Endpoint
+#     Value: !Join ['', ['http://', !ImportValue DomainName, '/api/books']]
+#     Export:
+#       Name: 'BooksApiEndpoint'

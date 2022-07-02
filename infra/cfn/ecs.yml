@@ -1,0 +1,206 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: ChaChat app ecs
+
+#======================
+# パラメーター
+#======================
+Parameters:
+  # プロジェクト名を入力する。各リソースのNameタグの値となる。
+  EnvironmentName:
+    Description: An environment name that is prefixed to resource names
+    Type: String
+
+  # Cluster名
+  ClusterName:
+    Description: Please enter the Cluster name
+    Type: String
+
+#======================
+# リソース
+#======================
+
+Resources:
+  #======================
+  ##### ECS作成 #####
+  #======================
+  Cluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Ref ClusterName
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: ChaChatApi #必須(タスク定義: api:番号 と表示される)
+      ExecutionRoleArn: !ImportValue ECSTaskExecutionRole #タスク実行ロール(ECSエージェントにアタッチ)
+      TaskRoleArn: !ImportValue ECSTaskRole #タスクロール(タスクにアタッチ)
+      Cpu: 256
+      Memory: 512
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      ContainerDefinitions:
+        - Name: !Sub "${EnvironmentName}-container"
+          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/chat-app:latest
+          Cpu: 256
+          Memory: 512
+          PortMappings: # HostPortとContainerPortは同じでないとエラーになる. expressがlistenしているポート
+            - HostPort: 3001
+              ContainerPort: 3001
+              Protocol: tcp
+          Environment:
+            - Name: DYNAMO_DB_URL
+              Value: dynamodb.ap-northeast-1.amazonaws.com
+            - Name: DB_PORT
+              Value: 8000
+            - Name: AWS_DEFAULT_REGION
+              Value: ap-northeast-1
+          Secrets:
+            - Name: FRONT_ENDPOINT
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/chachat/front_endpoint'
+            - Name: AWS_ACCESS_KEY_ID
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/chachat/aws_access_key_id'
+            - Name: AWS_SECRET_ACCESS_KEY
+              ValueFrom: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/chachat/aws_secret_access_key'
+          # LinuxParameter:
+          #   initProcessEnabled: true # 追加
+          # HealthCheck:
+          #   Command:
+          #     - "CMD-SHELL"
+          #     - "curl -f http://localhost/health || exit 1"
+          #   Interval: 5
+          #   Timeout: 2
+          #   Retries: 3
+  #         LogConfiguration:
+  #           LogDriver: awslogs
+  #           Options:
+  #             awslogs-group: !Sub /${AWS::StackName}/ecs/chachat
+  #             awslogs-region: ap-northeast-1
+  #             awslogs-stream-prefix: docker
+
+  # CloudWatchLogsGroup:
+  #   Type: AWS::Logs::LogGroup
+  #   Properties:
+  #     LogGroupName: !Sub /${AWS::StackName}/ecs/chachat
+  #     RetentionInDays: 7
+
+  # サービス(指定したタスクを維持するスケジューラ)
+  # (タスク定義とalbをつなぐ)
+  Service:
+    Type: AWS::ECS::Service
+    # DependsOn:
+    #   - ApplicationAutoscaling
+    #   - ApplicationLogGroup
+    #   - ApplicationLoadBalancerHttpListener
+    Properties:
+      ServiceName: !Sub "${EnvironmentName}-container"
+      TaskDefinition: !Ref TaskDefinition
+      Cluster: !Ref Cluster
+      LaunchType: FARGATE
+      DesiredCount: 1 # !Ref DesiredCount
+      LoadBalancers:
+        - ContainerName: !Sub "${EnvironmentName}-container"
+          ContainerPort: 3001
+          TargetGroupArn: !ImportValue ApplicationServiceTargetGroup
+      # Role: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      # NetworkConfiguration: # 下で作った、ECSSecurityGroup
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED  # PublicSubnetを利用する場合はENABLEDにする
+          SecurityGroups:
+            - !Ref ECSSecurityGroup
+          Subnets:
+            - !ImportValue PrivateSubnetA
+            - !ImportValue PrivateSubnetB
+
+  # ------------------------------------------------------------#
+  #  SecurityGroup for ECS Service
+  # ------------------------------------------------------------#
+  # AWS::EC2::SecurityGroupで「入れ物」を作ってからAWS::EC2::SecurityGroupEngressで「中身」をつめる
+  ECSSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      VpcId: !ImportValue VPC
+      GroupName: !Sub "${EnvironmentName}-ecs-sg"
+      GroupDescription: for ecs containers
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3001
+          ToPort: 3001
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 8000
+          ToPort: 8000
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${EnvironmentName}-ecs-sg"
+
+  # ECSSecurityGroupIngress:
+  #   Type: "AWS::EC2::SecurityGroupIngress"
+  #   Properties:
+  #     IpProtocol: tcp
+  #     FromPort: 80
+  #     ToPort: 80
+  #     SourceSecurityGroupId: !GetAtt [ALBSecurityGroup, GroupId]
+  #     GroupId: !GetAtt [ECSSecurityGroup, GroupId]
+
+  # Fargateタスク用のAutoScalingグループ
+  # サービスがタスク数を調整する働きを行う
+  # 何を : 起動テンプレート (起動設定は非推奨)
+  # どのようにスケールするか：AutoScalingGroup
+  # ServiceScalableTarget:
+  #   Type: AWS::ApplicationAutoScaling::ScalableTarget
+  #   DependsOn:
+  #     - Service
+  #   Properties:
+  #     MaxCapacity: 3
+  #     MinCapacity: 1
+  #     ResourceId: !Select [5, !Split [":", !Ref Service]]
+  #     RoleARN: !GetAtt ServiceTaskScalingRole.Arn
+  #     ScalableDimension: ecs:service:DesiredCount
+  #     ServiceNamespace: ecs
+
+  # ServiceScalingPolicy:
+  #   Type: AWS::ApplicationAutoScaling::ScalingPolicy
+  #   DependsOn:
+  #     - Service
+  #     - ServiceScalableTarget
+  #   Properties:
+  #     PolicyName: ServiceScalingPolicy
+  #     PolicyType: TargetTrackingScaling
+  #     ScalingTargetId: !Ref ServiceScalableTarget
+  #     TargetTrackingScalingPolicyConfiguration:
+  #       DisableScaleIn: false
+  #       PredefinedMetricSpecification:
+  #         PredefinedMetricType: ECSServiceAverageCPUUtilization
+  #       ScaleInCooldown: 0
+  #       ScaleOutCooldown: 0
+  #       TargetValue: !Ref ServiceScalingTargetValue
+
+  # ServiceTaskScalingRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     AssumeRolePolicyDocument:
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             Service: ecs-tasks.amazonaws.com
+  #           Action: sts:AssumeRole
+  #     ManagedPolicyArns:
+  #       - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceAutoscaleRole

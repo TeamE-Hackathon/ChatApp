@@ -1,0 +1,47 @@
+name: deploy prod
+on:
+  push:
+    tags:
+      - "*"
+env:
+  API_REPOSITORY_NAME: chat-app
+  AWS_DEFAULT_REGION: ap-northeast-1
+  REF_NAME: api
+jobs:
+  api-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+      - name: push ECR
+        env:
+          ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_DEFAULT_REGION }}.amazonaws.com
+          ECR_REPOSITORY: ${{ env.API_REPOSITORY_NAME}}
+          IMAGE_TAG: ${{ env.REF_NAME }}-${{ github.sha }}
+        run: |
+          ./infra/api-build.sh "${ECR_REGISTRY}" "${ECR_REPOSITORY}" "${IMAGE_TAG}"
+  front-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+      - name: sync S3
+        env:
+          REACT_APP_API_ENDPOINT: ${{ secrets.REACT_APP_API_ENDPOINT }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+        run: |
+          ./infra/front-build.sh "${REACT_APP_API_ENDPOINT}" "${S3_BUCKET}"
