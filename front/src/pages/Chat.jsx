@@ -34,18 +34,29 @@ export const NewChat = () => {
       socket.emit('join_room', roomName);
     }
   };
+
   const loadRoom = async (room) => {
-    const { data: roomInfo } = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/rooms/${room}`); // eslint-disable-line
-    setRoomName(roomInfo.length > 0 ? room : null);
+    try {
+      const { data: roomInfo } = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/rooms/${room}`); // eslint-disable-line
+      setRoomName(roomInfo.length > 0 ? room : null);
+    } catch (error) {
+      console.log(error);
+    }
   };
+
   const loadChats = async (room) => {
-    const { data: pastChats } = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/chats/${room}`); // eslint-disable-line
-    const newChats = pastChats.map((data) => {
-      const { RoomName: roomName, CreatedAt: createdAt, Message: message, UserName: userName } = data;
-      return { roomName: roomName, createdAt: createdAt, message: message, userName: userName };
-    });
-    setMessageList(newChats);
+    try {
+      const { data: pastChats } = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/chats/${room}`); // eslint-disable-line
+      const newChats = pastChats.map((data) => {
+        const { RoomName: roomName, CreatedAt: createdAt, Message: message, UserName: userName } = data;
+        return { roomName: roomName, createdAt: createdAt, message: message, userName: userName };
+      });
+      setMessageList(newChats);
+    } catch (error) {
+      console.log(error);
+    }
   };
+
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);

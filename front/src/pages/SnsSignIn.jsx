@@ -27,20 +27,24 @@ export const SnsSignIn = () => {
   const twitterProvider = new TwitterAuthProvider();
 
   const createDynamodbUser = async (uid, name, signInType) => {
-    const { data: userInfo } = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/users/${uid}`); // eslint-disable-line
-    // 初めてサインインする場合にDynamoDBにユーザ情報を保存
-    if (userInfo.length === 0) {
-      axios({
-        method: 'post',
-        url: `${process.env.REACT_APP_API_ENDPOINT}:3001/users/`, // eslint-disable-line
-        data: {
-          uid: uid,
-          name: name,
-          signInType: signInType,
-        },
-      }).then((res) => {
-        console.log('res', res.data);
-      });
+    try {
+      const { data: userInfo } = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}:3001/users/${uid}`); // eslint-disable-line
+      // 初めてサインインする場合にDynamoDBにユーザ情報を保存
+      if (userInfo.length === 0) {
+        axios({
+          method: 'post',
+          url: `${process.env.REACT_APP_API_ENDPOINT}:3001/users/`, // eslint-disable-line
+          data: {
+            uid: uid,
+            name: name,
+            signInType: signInType,
+          },
+        }).then((res) => {
+          console.log('res', res.data);
+        });
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
